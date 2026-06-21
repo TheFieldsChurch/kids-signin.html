@@ -155,6 +155,24 @@ tbody td{padding:11px 12px;font-size:14px;vertical-align:middle;}
   .pl-church{font-size:8pt;color:#888;margin-top:2mm;font-style:italic;}
 }
 #labelPrintArea{display:none;}
+.hist-scroll{flex:1;overflow-y:auto;padding:14px 16px 20px;}
+.hist-week{background:var(--white);border:1px solid var(--border);border-radius:12px;margin-bottom:12px;overflow:hidden;}
+.hist-hdr{display:flex;align-items:center;justify-content:space-between;padding:13px 16px;cursor:pointer;user-select:none;}
+.hist-date{font-size:15px;font-weight:700;}
+.hist-meta{display:flex;align-items:center;gap:8px;}
+.hist-count{font-size:12px;font-weight:700;background:var(--teal-lt);color:var(--teal);padding:3px 10px;border-radius:20px;}
+.hist-arr{color:var(--muted);font-size:14px;transition:transform .2s;}
+.hist-arr.open{transform:rotate(180deg);}
+.hist-body{display:none;border-top:1px solid var(--border);}
+.hist-body.open{display:block;}
+.hist-tbl{width:100%;border-collapse:collapse;}
+.hist-tbl th{background:#F8FAFC;padding:8px 14px;text-align:left;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.4px;color:var(--muted);}
+.hist-tbl td{padding:9px 14px;font-size:13px;border-top:1px solid var(--border);}
+.hist-tbl tr:nth-child(even) td{background:#FAFAFA;}
+.hist-foot{padding:10px 14px;display:flex;justify-content:flex-end;gap:8px;border-top:1px solid var(--border);background:#FAFAFA;}
+.btn-hexp{border:none;border-radius:7px;padding:7px 14px;font-size:12px;font-weight:700;cursor:pointer;background:var(--teal-lt);color:var(--teal);}
+.btn-hdel{border:none;border-radius:7px;padding:7px 12px;font-size:12px;font-weight:700;cursor:pointer;background:var(--red-lt);color:var(--red);}
+
 </style>
 </head>
 <body>
@@ -173,6 +191,7 @@ tbody td{padding:11px 12px;font-size:14px;vertical-align:middle;}
 <div class="tabs">
   <div class="tab active" onclick="switchTab('signin')">Sign In</div>
   <div class="tab"        onclick="switchTab('list')">Today</div>
+  <div class="tab"        onclick="switchTab('history')">History</div>
   <div class="tab"        onclick="switchTab('manage')">Register</div>
   <div class="tab"        onclick="switchTab('settings')">Settings</div>
 </div>
@@ -230,6 +249,17 @@ tbody td{padding:11px 12px;font-size:14px;vertical-align:middle;}
     <button class="btn-f btn-green"  onclick="window.print()">Print Sheet</button>
   </footer>
 </div></div>
+  </div>
+</div>
+
+
+<!-- HISTORY -->
+<div class="panel" id="panel-history">
+  <div class="hist-scroll" id="histScroll">
+    <div class="empty-state" id="emptyHistory">
+      <div class="icon">&#128197;</div>
+      <p>No history yet.<br>Past weeks appear here when you tap <strong>New Week</strong>.</p>
+    </div>
   </div>
 </div>
 
@@ -320,6 +350,7 @@ tbody td{padding:11px 12px;font-size:14px;vertical-align:middle;}
       <button class="btn-m btn-m-cancel" style="flex:1 1 100%" onclick="closeNewWeekModal()">Cancel</button>
       <button class="btn-m btn-m-teal"   style="flex:1" onclick="doExportThenClear()">Export CSV</button>
       <button class="btn-m" style="flex:1;background:#16A34A;color:#fff;" onclick="doSyncThenClear()">Sync to Google Sheets</button>
+      <button class="btn-m btn-m-blue" style="flex:1 1 100%" onclick="doArchiveOnly()">Save to History + Clear</button>
     </div>
   </div>
 </div>
@@ -330,11 +361,13 @@ tbody td{padding:11px 12px;font-size:14px;vertical-align:middle;}
 <script>
 var registry = JSON.parse(localStorage.getItem('kidsRegistry') || '[]');
 var today    = JSON.parse(localStorage.getItem('kidsToday')    || '[]');
+var history  = JSON.parse(localStorage.getItem('kidsHistory')  || '[]');
 var editingId = null;
 var newFormOpen = false;
 
 function saveReg()     { localStorage.setItem('kidsRegistry', JSON.stringify(registry)); }
 function saveToday()   { localStorage.setItem('kidsToday',    JSON.stringify(today)); }
+function saveHistory() { localStorage.setItem('kidsHistory',  JSON.stringify(history)); }
 function genId()       { return Date.now().toString(36) + Math.random().toString(36).slice(2,6); }
 
 function nowTime() {
@@ -359,7 +392,7 @@ function showToast(msg) {
 
 /* -- TABS -- */
 function switchTab(name) {
-  var names=['signin','list','manage','settings'];
+  var names=['signin','list','history','manage','settings'];
   var tabs=document.querySelectorAll('.tab');
   names.forEach(function(n,i){
     tabs[i].classList.toggle('active',n===name);
@@ -367,6 +400,7 @@ function switchTab(name) {
     if(panel) panel.classList.toggle('active',n===name);
   });
   if(name==='list')     renderTodayTable();
+  if(name==='history')  renderHistory();
   if(name==='manage')   renderRegister();
   if(name==='settings') setTimeout(loadSettingsTab,10);
   if(name==='signin')   renderQuick();
@@ -547,8 +581,24 @@ function doArchiveAndClear() {
   showToast('List cleared.');
 }
 
+
+
+function doArchiveOnly() {
+  if (!today.length) { alert('No children signed in today.'); return; }
+  archiveToday();
+  today=[]; saveToday(); closeNewWeekModal(); renderQuick(); updateHeader();
+  showToast('Saved to History and cleared.');
+}
+
+function archiveToday() {
+  if (!today.length) return;
+  history.push({date:todayDate(),shortDate:shortDate(),entries:JSON.parse(JSON.stringify(today))});
+  saveHistory();
+}
+
 function doExportThenClear() {
   exportToday();
+  archiveToday();
   today=[];saveToday();closeNewWeekModal();renderQuick();updateHeader();
   showToast('Exported and saved to History.');
 }
@@ -705,6 +755,82 @@ document.querySelectorAll('.form-row input').forEach(function(el){
 });
 
 
+
+/* -- HISTORY -- */
+function renderHistory() {
+  var scroll = document.getElementById('histScroll');
+  var empty  = document.getElementById('emptyHistory');
+  if (!history.length) {
+    scroll.innerHTML = '';
+    scroll.appendChild(empty);
+    empty.style.display = 'block';
+    return;
+  }
+  empty.style.display = 'none';
+  var sorted = history.slice().reverse();
+  var html = '';
+  sorted.forEach(function(week, wi) {
+    var idx = history.length - 1 - wi;
+    var present = week.entries.filter(function(e){ return e.status === 'in' || e.timeOut; }).length;
+    html += '<div class="hist-week">'
+      + '<div class="hist-hdr" onclick="toggleHistWeek(' + wi + ')">'
+        + '<div class="hist-date">' + esc(week.date) + '</div>'
+        + '<div class="hist-meta">'
+          + '<span class="hist-count">' + present + ' children</span>'
+          + '<span class="hist-arr" id="ha-' + wi + '">v</span>'
+        + '</div>'
+      + '</div>'
+      + '<div class="hist-body" id="hb-' + wi + '">'
+        + '<table class="hist-tbl">'
+          + '<thead><tr><th>#</th><th>Child</th><th>Age</th><th>Guardian</th><th>Signed In</th><th>Signed Out</th></tr></thead>'
+          + '<tbody>'
+          + week.entries.map(function(e, ei) {
+              return '<tr>'
+                + '<td>' + (ei+1) + '</td>'
+                + '<td><strong>' + esc(e.name) + '</strong></td>'
+                + '<td>' + esc(e.age) + '</td>'
+                + '<td>' + esc(e.guardian) + '</td>'
+                + '<td>' + esc(e.timeIn) + '</td>'
+                + '<td>' + (e.timeOut ? esc(e.timeOut) : '-') + '</td>'
+              + '</tr>';
+            }).join('')
+          + '</tbody>'
+        + '</table>'
+        + '<div class="hist-foot">'
+          + '<button class="btn-hexp" onclick="exportWeek(' + idx + ')">Export CSV</button>'
+          + '<button class="btn-hdel" onclick="deleteWeek(' + idx + ')">Delete</button>'
+        + '</div>'
+      + '</div>'
+    + '</div>';
+  });
+  scroll.innerHTML = html;
+  scroll.appendChild(empty);
+}
+
+function toggleHistWeek(wi) {
+  var body  = document.getElementById('hb-' + wi);
+  var arrow = document.getElementById('ha-' + wi);
+  if (!body) return;
+  var isOpen = body.classList.contains('open');
+  body.classList.toggle('open', !isOpen);
+  arrow.classList.toggle('open', !isOpen);
+}
+
+function deleteWeek(idx) {
+  if (confirm('Delete this week from history?')) {
+    history.splice(idx, 1);
+    saveHistory();
+    renderHistory();
+  }
+}
+
+function exportWeek(idx) {
+  var week = history[idx];
+  if (!week) return;
+  var filename = 'Kids-Church-' + week.shortDate.replace(/\//g, '-') + '.csv';
+  downloadCsv(buildCsv(week.entries, week.date), filename);
+}
+
 /* -- SETTINGS -- */
 var SHEETS_URL_KEY = 'kidsSheetUrl';
 
@@ -814,6 +940,7 @@ function syncViaGet(url, payload) {
   var img = new Image();
   var getUrl = url + '?payload=' + encodeURIComponent(JSON.stringify(payload));
   img.onload = img.onerror = function() {
+    archiveToday();
     today = []; saveToday();
     renderQuick(); updateHeader();
     showToast('Synced via GET! List cleared.');
