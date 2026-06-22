@@ -409,7 +409,7 @@ function shortDate() {
 
 /* -- TABS -- */
 function switchTab(name) {
-  var names = ['signin','list','weekHistory','manage','settings'];
+  var names = ['signin','list','history','manage','settings'];
   var tabs  = document.querySelectorAll('.tab');
   names.forEach(function(n, i){
     tabs[i].classList.toggle('active', n === name);
@@ -417,7 +417,7 @@ function switchTab(name) {
     if (panel) panel.classList.toggle('active', n === name);
   });
   if (name === 'list')     renderTodayTable();
-  if (name === 'weekHistory')  renderHistory();
+  if (name === 'history')  renderHistory();
   if (name === 'manage')   renderRegister();
   if (name === 'settings') loadSettingsTab();
   if (name === 'signin')   renderQuick();
@@ -439,11 +439,11 @@ function loadData() {
     if (!res.success) { showToast('Error: ' + res.message); return; }
     registry = res.registry || [];
     today    = res.today    || [];
-    weekHistory  = res.weekHistory  || [];
+    weekHistory  = res.history  || [];
     renderQuick();
     updateHeader();
     // Re-render weekHistory tab if it is currently active
-    var histPanel = document.getElementById('panel-weekHistory');
+    var histPanel = document.getElementById('panel-history');
     if (histPanel && histPanel.classList.contains('active')) renderHistory();
   });
 }
