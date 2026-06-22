@@ -442,6 +442,9 @@ function loadData() {
     history  = res.history  || [];
     renderQuick();
     updateHeader();
+    // Re-render history tab if it is currently active
+    var histPanel = document.getElementById('panel-history');
+    if (histPanel && histPanel.classList.contains('active')) renderHistory();
   });
 }
 
@@ -622,7 +625,7 @@ function signInNewChild() {
 function renderHistory() {
   var scroll = document.getElementById('histScroll');
   var empty  = document.getElementById('emptyHistory');
-  if (!history.length) {
+  if (!history || !history.length) {
     scroll.innerHTML = ''; scroll.appendChild(empty); empty.style.display = 'block'; return;
   }
   empty.style.display = 'none';
@@ -630,7 +633,8 @@ function renderHistory() {
   var html = '';
   sorted.forEach(function(week, wi){
     var idx = history.length - 1 - wi;
-    var present = week.entries.filter(function(e){ return e.status === 'in' || e.timeOut; }).length;
+    // Count all entries as attended - if they are in history they were there
+    var present = week.entries ? week.entries.length : 0;
     html += '<div class="hist-week">'
       + '<div class="hist-hdr" onclick="toggleHistWeek(' + wi + ')">'
         + '<div class="hist-date">' + esc(week.date) + '</div>'
