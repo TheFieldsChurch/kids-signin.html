@@ -315,9 +315,9 @@ header{background:#5C3D4E;color:#FFFFFF;padding:14px 20px;flex-shrink:0;}
     <h2>Print Name Tags</h2>
     <p class="modal-sub">Tap to select or deselect. All signed-in children are pre-selected.</p>
     <div class="label-grid" id="labelGrid"></div>
-    <div class="modal-actions" style="position:sticky;bottom:0;background:var(--white);padding-top:12px;">
-      <button class="btn-m btn-m-cancel" onclick="closeLabelModal()">Cancel</button>
-      <button class="btn-m btn-m-blue"   onclick="printLabels()">Print Name Tags</button>
+    <div class="modal-actions" style="flex-direction:column;gap:8px;margin-top:16px;">
+      <button class="btn-m btn-m-blue" style="width:100%;height:50px;font-size:16px;" onclick="printLabels()">Print Name Tags</button>
+      <button class="btn-m btn-m-cancel" style="width:100%;" onclick="closeLabelModal()">Cancel</button>
     </div>
   </div>
 </div>
