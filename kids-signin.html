@@ -358,7 +358,7 @@ tbody td{padding:11px 12px;font-size:14px;vertical-align:middle;}
 var SHEETS_URL_KEY = 'kidsSheetUrl';
 var registry = [];
 var today    = [];
-var history  = [];
+var weekHistory  = [];
 var editingId = null;
 var newFormOpen = false;
 
@@ -409,7 +409,7 @@ function shortDate() {
 
 /* -- TABS -- */
 function switchTab(name) {
-  var names = ['signin','list','history','manage','settings'];
+  var names = ['signin','list','weekHistory','manage','settings'];
   var tabs  = document.querySelectorAll('.tab');
   names.forEach(function(n, i){
     tabs[i].classList.toggle('active', n === name);
@@ -417,7 +417,7 @@ function switchTab(name) {
     if (panel) panel.classList.toggle('active', n === name);
   });
   if (name === 'list')     renderTodayTable();
-  if (name === 'history')  renderHistory();
+  if (name === 'weekHistory')  renderHistory();
   if (name === 'manage')   renderRegister();
   if (name === 'settings') loadSettingsTab();
   if (name === 'signin')   renderQuick();
@@ -439,11 +439,11 @@ function loadData() {
     if (!res.success) { showToast('Error: ' + res.message); return; }
     registry = res.registry || [];
     today    = res.today    || [];
-    history  = res.history  || [];
+    weekHistory  = res.weekHistory  || [];
     renderQuick();
     updateHeader();
-    // Re-render history tab if it is currently active
-    var histPanel = document.getElementById('panel-history');
+    // Re-render weekHistory tab if it is currently active
+    var histPanel = document.getElementById('panel-weekHistory');
     if (histPanel && histPanel.classList.contains('active')) renderHistory();
   });
 }
@@ -625,15 +625,15 @@ function signInNewChild() {
 function renderHistory() {
   var scroll = document.getElementById('histScroll');
   var empty  = document.getElementById('emptyHistory');
-  if (!history || !history.length) {
+  if (!weekHistory || !weekHistory.length) {
     scroll.innerHTML = ''; scroll.appendChild(empty); empty.style.display = 'block'; return;
   }
   empty.style.display = 'none';
-  var sorted = history.slice().reverse();
+  var sorted = weekHistory.slice().reverse();
   var html = '';
   sorted.forEach(function(week, wi){
-    var idx = history.length - 1 - wi;
-    // Count all entries as attended - if they are in history they were there
+    var idx = weekHistory.length - 1 - wi;
+    // Count all entries as attended - if they are in weekHistory they were there
     var present = week.entries ? week.entries.length : 0;
     html += '<div class="hist-week">'
       + '<div class="hist-hdr" onclick="toggleHistWeek(' + wi + ')">'
@@ -678,10 +678,10 @@ function toggleHistWeek(wi) {
 }
 
 function deleteWeek(idx) {
-  if (!confirm('Delete this week from history?')) return;
+  if (!confirm('Delete this week from weekHistory?')) return;
   api({action:'deleteHistory', idx:idx}, function(err, res){
     if (err || !res.success) { showToast('Error: ' + (err||res.message)); return; }
-    history.splice(idx, 1);
+    weekHistory.splice(idx, 1);
     renderHistory();
     showToast('Week deleted.');
   });
@@ -782,10 +782,10 @@ function closeNewWeekModal(){ document.getElementById('newWeekModal').classList.
 
 function doNewWeek() {
   closeNewWeekModal();
-  showToast('Saving to history...');
+  showToast('Saving to weekHistory...');
   api({action:'newWeek'}, function(err, res){
     if (err || !res.success) { showToast('Error: ' + (err||res.message)); return; }
-    history.push({date:todayDate(), shortDate:shortDate(), entries:JSON.parse(JSON.stringify(today))});
+    weekHistory.push({date:todayDate(), shortDate:shortDate(), entries:JSON.parse(JSON.stringify(today))});
     today = [];
     renderQuick(); updateHeader(); renderHistory();
     showToast('Week saved! List cleared.');
