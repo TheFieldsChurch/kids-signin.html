@@ -6,30 +6,60 @@
 <title>Kids Church Sign-In - The Fields Church</title>
 <style>
 :root{
-  --blue:#2563EB;--blue-dk:#1E40AF;--green:#16A34A;--green-lt:#DCFCE7;
-  --red:#DC2626;--red-lt:#FEE2E2;--amber:#D97706;
-  --purple:#7C3AED;--purple-lt:#EDE9FE;--teal:#0D9488;--teal-lt:#CCFBF1;
-  --slate:#1E293B;--muted:#64748B;--bg:#F1F5F9;
-  --white:#FFFFFF;--border:#CBD5E1;--row-alt:#E8F0FE;
+  --blue:      #5C3D4E;
+  --blue-dk:   #3D2535;
+  --blue-hdr:  #5C3D4E;
+  --green:     #6B8C6B;
+  --green-lt:  #E8EFE6;
+  --red:       #8B4A42;
+  --red-lt:    #F5E8E6;
+  --amber:     #B8895A;
+  --amber-lt:  #F5EBE0;
+  --purple:    #7A8A7A;
+  --purple-lt: #EAF0EA;
+  --accent:    #8B5A6B;
+  --accent-lt: #F0E8EC;
+  --slate:     #3A3D35;
+  --muted:     #7A7D72;
+  --bg:        #F4F1EC;
+  --white:     #FDFBF8;
+  --border:    #D6D0C8;
+  --row-alt:   #EEE9E2;
 }
 *{box-sizing:border-box;margin:0;padding:0;}
 body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--bg);color:var(--slate);min-height:100vh;display:flex;flex-direction:column;}
-header{background:var(--blue);color:var(--white);padding:16px 20px;display:flex;align-items:center;justify-content:space-between;gap:10px;box-shadow:0 2px 8px rgba(0,0,0,.18);flex-shrink:0;}
-.hdr-left h1{font-size:20px;font-weight:700;}
-.hdr-left p{font-size:12px;opacity:.82;margin-top:2px;}
-.hdr-right{display:flex;align-items:center;gap:8px;}
-#dateBadge{background:rgba(255,255,255,.18);border-radius:8px;padding:5px 10px;font-size:12px;font-weight:600;white-space:nowrap;}
-#childCount{background:var(--white);color:var(--blue-dk);border-radius:8px;padding:5px 12px;font-size:13px;font-weight:700;}
-.tabs{display:flex;background:var(--white);border-bottom:2px solid var(--border);flex-shrink:0;}
-.tab{flex:1;padding:14px 6px;font-size:13px;font-weight:700;text-align:center;cursor:pointer;color:var(--muted);border-bottom:3px solid transparent;transition:all .15s;user-select:none;white-space:nowrap;}
-.tab.active{color:var(--blue);border-bottom-color:var(--blue);}
+
+/* HEADER */
+header{background:#5C3D4E;color:#FFFFFF;padding:14px 20px;flex-shrink:0;}
+.hdr-top{display:flex;align-items:center;justify-content:space-between;}
+.hdr-title{font-size:22px;font-weight:800;letter-spacing:-0.3px;}
+.hdr-sub{font-size:12px;opacity:.7;margin-top:3px;}
+.hdr-date{font-size:12px;opacity:.7;text-align:right;}
+
+/* TABS */
+.tabs{display:flex;background:#5C3D4E;border-bottom:3px solid rgba(255,255,255,.15);flex-shrink:0;}
+.tab{flex:1;padding:12px 6px;font-size:13px;font-weight:600;text-align:center;cursor:pointer;color:rgba(255,255,255,.7);border-bottom:3px solid transparent;margin-bottom:-3px;transition:all .15s;user-select:none;white-space:nowrap;}
+.tab.active{color:#FFFFFF;border-bottom-color:#B8895A;}
+
+/* PANELS */
 .panel{display:none;flex:1;flex-direction:column;overflow:hidden;}
 .panel.active{display:flex;}
-/* LOADING */
-.loading-screen{display:flex;flex-direction:column;align-items:center;justify-content:center;flex:1;gap:16px;color:var(--muted);}
-.spinner{width:40px;height:40px;border:4px solid var(--border);border-top-color:var(--blue);border-radius:50%;animation:spin .8s linear infinite;}
-@keyframes spin{to{transform:rotate(360deg);}}
-/* SIGN IN */
+
+/* STATS BAR */
+.stats-bar{background:#3D2535;color:#FFFFFF;padding:14px 20px;display:flex;align-items:center;gap:0;flex-shrink:0;}
+.stat{flex:1;padding-right:20px;}
+.stat-val{font-size:28px;font-weight:800;line-height:1;}
+.stat-lbl{font-size:11px;opacity:.6;margin-top:3px;text-transform:uppercase;letter-spacing:.5px;}
+.btn-new-person{background:var(--accent);color:var(--white);border:none;border-radius:8px;padding:10px 18px;font-size:14px;font-weight:700;cursor:pointer;white-space:nowrap;flex-shrink:0;}
+.btn-new-person:active{opacity:.85;}
+
+/* SEARCH */
+.search-wrap{padding:14px 16px 0;flex-shrink:0;}
+.search-box{width:100%;height:46px;border:2px solid var(--border);border-radius:10px;padding:0 14px 0 40px;font-size:15px;color:var(--slate);background:var(--white);background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%2394A3B8' viewBox='0 0 16 16'%3E%3Cpath d='M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398l3.85 3.85a1 1 0 0 0 1.415-1.415l-3.868-3.833zm-5.242 1.156a5.5 5.5 0 1 1 0-11 5.5 5.5 0 0 1 0 11z'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:12px center;}
+.search-box:focus{outline:none;border-color:var(--accent);}
+.search-box::placeholder{color:#94A3B8;}
+
+/* CARD GRID */
 .quick-scroll{flex:1;overflow-y:auto;padding:14px 16px 10px;}
 .section-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:var(--muted);margin-bottom:8px;margin-top:4px;}
 .quick-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px;margin-bottom:16px;}
@@ -42,73 +72,43 @@ header{background:var(--blue);color:var(--white);padding:16px 20px;display:flex;
 .qc-status{font-size:11px;font-weight:700;margin-top:7px;}
 .signed-in .qc-status{color:var(--green);}
 .signed-out .qc-status{color:var(--muted);}
-.qc-btn-row{display:flex;gap:5px;margin-top:7px;justify-content:center;}
-.qc-so{font-size:11px;font-weight:700;background:var(--amber);color:var(--white);border:none;border-radius:6px;padding:4px 7px;cursor:pointer;}
-.qc-lbl{font-size:11px;font-weight:700;background:var(--purple-lt);color:var(--purple);border:none;border-radius:6px;padding:4px 7px;cursor:pointer;}
-.new-child-bar{background:var(--white);border-top:2px solid var(--border);flex-shrink:0;}
-.new-child-toggle{display:flex;align-items:center;justify-content:space-between;padding:13px 16px;cursor:pointer;user-select:none;}
-.new-child-toggle span{font-size:14px;font-weight:700;color:var(--blue);}
-.toggle-arrow{font-size:18px;color:var(--muted);transition:transform .2s;}
-.toggle-arrow.open{transform:rotate(180deg);}
-.new-child-form{display:none;padding:0 16px 14px;}
-.new-child-form.open{display:block;}
-.nc-note{font-size:12px;color:var(--muted);margin-bottom:10px;}
-.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px;}
-.form-grid input,.form-grid select,.form-full input{width:100%;height:48px;border:2px solid var(--border);border-radius:10px;padding:0 12px;font-size:15px;color:var(--slate);background:var(--bg);-webkit-appearance:none;appearance:none;}
-.form-grid input:focus,.form-grid select:focus,.form-full input:focus{outline:none;border-color:var(--blue);background:var(--white);}
-.form-grid input::placeholder,.form-full input::placeholder{color:#94A3B8;}
-.form-grid select.empty,.form-row select.empty,.edit-field select.empty{color:#94A3B8;}
-.form-full{margin-bottom:8px;}
-.btn-signin-new{width:100%;height:50px;background:var(--green);color:var(--white);border:none;border-radius:10px;font-size:16px;font-weight:700;cursor:pointer;}
-.btn-signin-new:active{opacity:.85;}
-/* FOOTER */
-footer{background:var(--white);border-top:2px solid var(--border);padding:12px 16px;display:flex;gap:8px;justify-content:flex-end;flex-shrink:0;flex-wrap:wrap;}
-.btn-f{height:44px;padding:0 14px;border-radius:10px;font-size:13px;font-weight:700;cursor:pointer;border:none;}
-.btn-green{background:var(--green);color:var(--white);}
-.btn-purple{background:var(--purple);color:var(--white);}
-.btn-red{background:var(--red-lt);color:var(--red);}
-.btn-f:active{opacity:.8;}
+.qc-btn-row{display:flex;gap:5px;margin-top:8px;justify-content:center;}
+.qc-so{font-size:11px;font-weight:700;background:var(--accent);color:var(--white);border:none;border-radius:6px;padding:5px 8px;cursor:pointer;}
+.qc-lbl{font-size:11px;font-weight:700;background:var(--green-lt);color:var(--green);border:none;border-radius:6px;padding:5px 8px;cursor:pointer;}
+
+/* BOTTOM BUTTONS */
+.bottom-btns{padding:12px 16px;display:flex;flex-direction:column;gap:10px;flex-shrink:0;background:var(--bg);}
+.btn-full{width:100%;height:52px;border:none;border-radius:10px;font-size:16px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;}
+.btn-upload{background:var(--green);color:var(--white);}
+.btn-labels{background:var(--amber);color:var(--white);}
+.btn-full:active{opacity:.85;}
+
+/* LOADING */
+.loading-screen{display:flex;flex-direction:column;align-items:center;justify-content:center;flex:1;gap:16px;color:var(--muted);}
+.spinner{width:40px;height:40px;border:4px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin .8s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg);}}
+
 /* REGISTER */
 .manage-top{background:var(--white);border-bottom:2px solid var(--border);padding:14px 16px;flex-shrink:0;}
 .manage-top h2{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:var(--muted);margin-bottom:10px;}
 .form-row{display:flex;gap:8px;flex-wrap:wrap;}
 .form-row input,.form-row select{flex:1;min-width:120px;height:48px;border:2px solid var(--border);border-radius:10px;padding:0 12px;font-size:15px;color:var(--slate);background:var(--bg);-webkit-appearance:none;appearance:none;}
-.form-row input:focus,.form-row select:focus{outline:none;border-color:var(--blue);background:var(--white);}
+.form-row input:focus,.form-row select:focus{outline:none;border-color:var(--accent);background:var(--white);}
 .form-row input::placeholder{color:#94A3B8;}
-.btn-primary{height:48px;padding:0 20px;background:var(--blue);color:var(--white);border:none;border-radius:10px;font-size:15px;font-weight:700;cursor:pointer;white-space:nowrap;flex-shrink:0;}
-.btn-primary:active{background:var(--blue-dk);}
+.dob-wrap{flex:1;min-width:150px;display:flex;flex-direction:column;gap:3px;}
+.dob-wrap label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--muted);}
+.dob-wrap input{width:100%;height:48px;border:2px solid var(--border);border-radius:10px;padding:0 12px;font-size:15px;color:var(--slate);background:var(--bg);}
+.dob-wrap input:focus{outline:none;border-color:var(--accent);background:var(--white);}
+.btn-primary{height:48px;padding:0 20px;background:var(--hdr);color:var(--white);border:none;border-radius:10px;font-size:15px;font-weight:700;cursor:pointer;white-space:nowrap;flex-shrink:0;}
+.btn-primary:active{background:var(--hdr-dk);}
 .reg-list{flex:1;overflow-y:auto;padding:12px 16px;}
 .reg-item{background:var(--white);border:1px solid var(--border);border-radius:10px;padding:12px 14px;display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;}
 .ri-name{font-size:15px;font-weight:700;}
 .ri-detail{font-size:13px;color:var(--muted);margin-top:2px;}
 .reg-actions{display:flex;gap:6px;flex-shrink:0;margin-left:10px;}
-.btn-edit{border:none;border-radius:7px;padding:7px 12px;font-size:13px;font-weight:700;cursor:pointer;background:#EFF6FF;color:var(--blue);}
+.btn-edit{border:none;border-radius:7px;padding:7px 12px;font-size:13px;font-weight:700;cursor:pointer;background:var(--green-lt);color:var(--hdr);}
 .btn-rm{border:none;border-radius:7px;padding:7px 12px;font-size:13px;font-weight:700;cursor:pointer;background:var(--red-lt);color:var(--red);}
-/* MODALS */
-.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:100;align-items:center;justify-content:center;padding:20px;}
-.modal-overlay.open{display:flex;}
-.modal-box{background:var(--white);border-radius:16px;padding:20px;width:100%;max-width:480px;max-height:85vh;overflow-y:auto;box-shadow:0 8px 32px rgba(0,0,0,.2);}
-.modal-box h2{font-size:17px;font-weight:700;margin-bottom:4px;}
-.modal-sub{font-size:13px;color:var(--muted);margin-bottom:14px;}
-.label-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px;}
-.lp{border:2px dashed var(--border);border-radius:8px;padding:12px;text-align:center;cursor:pointer;transition:all .15s;}
-.lp.selected{border-color:var(--purple);background:var(--purple-lt);}
-.lp-name{font-size:17px;font-weight:800;margin-bottom:3px;}
-.lp-detail{font-size:11px;color:var(--muted);}
-.lp-church{font-size:10px;color:var(--muted);margin-top:3px;font-style:italic;}
-.modal-actions{display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap;}
-.btn-m{height:42px;padding:0 18px;border-radius:9px;font-size:14px;font-weight:700;cursor:pointer;border:none;}
-.btn-m-cancel{background:var(--bg);color:var(--slate);}
-.btn-m-purple{background:var(--purple);color:var(--white);}
-.btn-m-blue{background:var(--blue);color:var(--white);}
-.btn-m-green{background:var(--green);color:var(--white);}
-.edit-field{margin-bottom:12px;}
-.edit-field label{font-size:11px;font-weight:700;color:var(--muted);display:block;margin-bottom:4px;text-transform:uppercase;letter-spacing:.4px;}
-.edit-field input,.edit-field select{width:100%;height:46px;border:2px solid var(--border);border-radius:9px;padding:0 12px;font-size:15px;background:var(--bg);color:var(--slate);-webkit-appearance:none;appearance:none;}
-.edit-field input:focus,.edit-field select:focus{outline:none;border-color:var(--blue);background:var(--white);}
-.nw-summary{background:var(--teal-lt);border-radius:10px;padding:14px;margin-bottom:16px;}
-.nw-summary p{font-size:14px;color:var(--teal);font-weight:600;margin-bottom:4px;}
-.nw-summary span{font-size:13px;color:var(--muted);}
+
 /* SETTINGS */
 .settings-wrap{flex:1;overflow-y:auto;padding:16px;}
 .settings-card{background:var(--white);border-radius:12px;padding:20px;box-shadow:0 1px 4px rgba(0,0,0,.08);margin-bottom:16px;}
@@ -116,15 +116,47 @@ footer{background:var(--white);border-top:2px solid var(--border);padding:12px 1
 .settings-card p{font-size:13px;color:var(--muted);margin-bottom:14px;line-height:1.5;}
 .settings-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--muted);display:block;margin-bottom:6px;}
 .settings-input{width:100%;height:48px;border:2px solid var(--border);border-radius:10px;padding:0 12px;font-size:13px;color:var(--slate);background:var(--bg);margin-bottom:10px;}
-.settings-input:focus{outline:none;border-color:var(--blue);background:var(--white);}
-.btn-save-url{height:44px;padding:0 20px;background:var(--blue);color:var(--white);border:none;border-radius:10px;font-size:14px;font-weight:700;cursor:pointer;width:100%;}
+.settings-input:focus{outline:none;border-color:var(--accent);background:var(--white);}
+.btn-save-url{height:44px;padding:0 20px;background:var(--hdr);color:var(--white);border:none;border-radius:10px;font-size:14px;font-weight:700;cursor:pointer;width:100%;}
 #urlStatus{margin-top:10px;font-size:13px;font-weight:600;text-align:center;}
+
 /* EMPTY */
-.empty-state{text-align:center;padding:40px;color:var(--muted);}
-.empty-state .icon{font-size:40px;margin-bottom:10px;}
+.empty-state{text-align:center;padding:48px 20px;color:var(--muted);}
+.empty-state .icon{font-size:48px;margin-bottom:12px;}
+.medical-badge{display:inline-block;background:var(--amber-lt);color:#6B3D1E;border:1px solid #C9A882;border-radius:6px;padding:3px 8px;font-size:10px;font-weight:700;margin-top:5px;}
+.empty-state p{font-size:15px;line-height:1.6;}
+
+/* MODALS */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:100;align-items:center;justify-content:center;padding:20px;}
+.modal-overlay.open{display:flex;}
+.modal-box{background:var(--white);border-radius:16px;padding:20px;width:100%;max-width:480px;max-height:90vh;overflow-y:auto;box-shadow:0 8px 32px rgba(0,0,0,.2);}
+.modal-box h2{font-size:18px;font-weight:800;margin-bottom:4px;}
+.modal-sub{font-size:13px;color:var(--muted);margin-bottom:16px;}
+.modal-field{margin-bottom:12px;}
+.modal-field label{font-size:11px;font-weight:700;color:var(--muted);display:block;margin-bottom:4px;text-transform:uppercase;letter-spacing:.4px;}
+.modal-field input,.modal-field select{width:100%;height:48px;border:2px solid var(--border);border-radius:10px;padding:0 12px;font-size:15px;background:var(--bg);color:var(--slate);-webkit-appearance:none;appearance:none;}
+.modal-field input:focus,.modal-field select:focus{outline:none;border-color:var(--accent);background:var(--white);}
+.modal-field input::placeholder{color:#94A3B8;}
+.modal-actions{display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap;margin-top:16px;}
+.btn-m{height:44px;padding:0 20px;border-radius:9px;font-size:14px;font-weight:700;cursor:pointer;border:none;}
+.btn-m-cancel{background:var(--bg);color:var(--slate);}
+.btn-m-blue{background:var(--hdr);color:var(--white);}
+.btn-m-green{background:var(--green);color:var(--white);}
+.btn-m-amber{background:var(--accent);color:var(--white);}
+.nw-summary{background:var(--green-lt);border:1px solid #B8CCBA;border-radius:10px;padding:14px;margin-bottom:16px;}
+.nw-summary p{font-size:14px;color:var(--hdr);font-weight:700;margin-bottom:4px;}
+.nw-summary span{font-size:13px;color:var(--muted);}
+.label-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px;}
+.lp{border:2px dashed var(--border);border-radius:8px;padding:12px;text-align:center;cursor:pointer;transition:all .15s;}
+.lp.selected{border-color:var(--green);background:var(--green-lt);}
+.lp-name{font-size:17px;font-weight:800;margin-bottom:3px;}
+.lp-detail{font-size:11px;color:var(--muted);}
+.lp-church{font-size:10px;color:var(--muted);margin-top:3px;font-style:italic;}
+
 /* TOAST */
-.toast{position:fixed;bottom:80px;left:50%;transform:translateX(-50%);background:var(--slate);color:var(--white);padding:10px 20px;border-radius:20px;font-size:14px;font-weight:600;opacity:0;pointer-events:none;transition:opacity .2s;z-index:200;white-space:nowrap;}
+.toast{position:fixed;bottom:100px;left:50%;transform:translateX(-50%);background:var(--slate);color:var(--white);padding:10px 22px;border-radius:20px;font-size:14px;font-weight:600;opacity:0;pointer-events:none;transition:opacity .2s;z-index:200;white-space:nowrap;}
 .toast.show{opacity:1;}
+
 /* PRINT */
 @media print{
   body > *:not(#labelPrintArea){display:none !important;}
@@ -140,58 +172,47 @@ footer{background:var(--white);border-top:2px solid var(--border);padding:12px 1
 <body>
 
 <header>
-  <div class="hdr-left">
-    <h1>Kids Church Sign-In</h1>
-    <p>The Fields Church</p>
-  </div>
-  <div class="hdr-right">
-    <div id="dateBadge">-</div>
-    <div id="childCount">0 present</div>
+  <div class="hdr-top">
+    <div>
+      <div class="hdr-title">Kids Church Sign-In</div>
+      <div class="hdr-sub">The Fields Church</div>
+    </div>
+    <div class="hdr-date" id="dateBadge">-</div>
   </div>
 </header>
 
 <div class="tabs">
-  <div class="tab active" onclick="switchTab('signin')">Sign In</div>
-  <div class="tab"        onclick="switchTab('manage')">Register</div>
-  <div class="tab"        onclick="switchTab('settings')">Settings</div>
+  <div class="tab active" onclick="switchTab('signin')">&#9989; Sign In</div>
+  <div class="tab"        onclick="switchTab('manage')">&#128203; Register</div>
+  <div class="tab"        onclick="switchTab('settings')">&#9881; Settings</div>
 </div>
 
 <!-- SIGN IN -->
 <div class="panel active" id="panel-signin">
+  <div class="stats-bar">
+    <div class="stat">
+      <div class="stat-val" id="presentCount">0</div>
+      <div class="stat-lbl">Present today</div>
+    </div>
+    <div class="stat">
+      <div class="stat-val" id="registeredCount">0</div>
+      <div class="stat-lbl">Registered</div>
+    </div>
+    <button class="btn-new-person" onclick="openNewPersonModal()">+ New Person</button>
+  </div>
+  <div class="search-wrap">
+    <input class="search-box" id="searchBox" type="text" placeholder="Search by name..." autocomplete="off" autocorrect="off" oninput="renderQuick()">
+  </div>
   <div class="quick-scroll" id="quickScroll">
     <div class="loading-screen" id="loadingScreen">
       <div class="spinner"></div>
       <p>Loading...</p>
     </div>
   </div>
-  <div class="new-child-bar">
-    <div class="new-child-toggle" onclick="toggleNewForm()">
-      <span>+ First visit? Sign in here</span>
-      <span class="toggle-arrow" id="toggleArrow">v</span>
-    </div>
-    <div class="new-child-form" id="newChildForm">
-      <p class="nc-note">Fill in your child's details - we will remember them for next time.</p>
-      <div class="form-grid">
-        <input id="nc-name" type="text" placeholder="Child's full name" autocomplete="off" autocorrect="off" style="grid-column:1/-1">
-        <select id="nc-age">
-          <option value="" disabled selected>Age</option>
-          <option>2</option><option>3</option><option>4</option><option>5</option>
-          <option>6</option><option>7</option><option>8</option>
-          <option>9</option><option>10</option><option>11</option>
-        </select>
-        <input id="nc-guardian" type="text" placeholder="Parent / guardian name" autocomplete="off" autocorrect="off" style="grid-column:1/-1">
-      </div>
-      <div class="form-full">
-        <input id="nc-contact" type="tel" placeholder="Contact number" autocomplete="off">
-      </div>
-      <button class="btn-signin-new" onclick="signInNewChild()">Sign In and Save for Next Time</button>
-    </div>
+  <div class="bottom-btns">
+    <button class="btn-full btn-labels" onclick="openLabelModal()">&#127991; Print Name Tag Labels</button>
+    <button class="btn-full btn-upload" onclick="openNewWeekModal()">&#128196; Upload to Google Sheets</button>
   </div>
-  <footer>
-    <button class="btn-f btn-purple" onclick="openLabelModal()">Labels</button>
-    <button class="btn-f" style="background:var(--teal);color:var(--white);" onclick="loadData()">Refresh</button>
-    <button class="btn-f btn-red"    onclick="openNewWeekModal()">New Week</button>
-  </footer>
 </div>
 
 <!-- REGISTER -->
@@ -199,15 +220,14 @@ footer{background:var(--white);border-top:2px solid var(--border);padding:12px 1
   <div class="manage-top">
     <h2>Add a child manually</h2>
     <div class="form-row">
-      <input id="m-name"     type="text" placeholder="Child's full name"  autocomplete="off" autocorrect="off">
-      <select id="m-age">
-        <option value="" disabled selected>Age</option>
-        <option>2</option><option>3</option><option>4</option><option>5</option>
-        <option>6</option><option>7</option><option>8</option>
-        <option>9</option><option>10</option><option>11</option>
-      </select>
-      <input id="m-guardian" type="text" placeholder="Parent / guardian"  autocomplete="off" autocorrect="off">
-      <input id="m-contact"  type="tel"  placeholder="Contact number"     autocomplete="off">
+      <input id="m-name"     type="text" placeholder="Child's full name" autocomplete="off" autocorrect="off">
+      <div class="dob-wrap">
+        <label>Date of birth</label>
+        <input id="m-dob" type="date">
+      </div>
+      <input id="m-guardian" type="text" placeholder="Parent / guardian" autocomplete="off" autocorrect="off">
+      <input id="m-contact"  type="tel"  placeholder="Contact number"    autocomplete="off">
+      <input id="m-medical" type="text" placeholder="Allergies / medical notes (optional)" autocomplete="off" autocorrect="off" style="flex:1 1 100%;">
       <button class="btn-primary" onclick="addToRegister()">+ Add</button>
     </div>
   </div>
@@ -232,15 +252,24 @@ footer{background:var(--white);border-top:2px solid var(--border);padding:12px 1
   </div>
 </div>
 
-<!-- LABEL MODAL -->
-<div class="modal-overlay" id="labelModal">
+<!-- NEW PERSON MODAL -->
+<div class="modal-overlay" id="newPersonModal">
   <div class="modal-box">
-    <h2>Print Name Labels</h2>
-    <p class="modal-sub">Tap to select or deselect. Children currently signed in are pre-selected.</p>
-    <div class="label-grid" id="labelGrid"></div>
+    <h2>New Child</h2>
+    <p class="modal-sub">Fill in the details below. We will remember them for next time.</p>
+    <div class="modal-field"><label>Child's full name</label>
+      <input id="np-name" type="text" placeholder="e.g. Emma Smith" autocomplete="off" autocorrect="off"></div>
+    <div class="modal-field"><label>Date of birth</label>
+      <input id="np-dob" type="date"></div>
+    <div class="modal-field"><label>Parent / guardian name</label>
+      <input id="np-guardian" type="text" placeholder="e.g. Sarah Smith" autocomplete="off" autocorrect="off"></div>
+    <div class="modal-field"><label>Contact number</label>
+      <input id="np-contact" type="tel" placeholder="e.g. 0412 345 678" autocomplete="off"></div>
+    <div class="modal-field"><label>Allergies / Medical Notes</label>
+      <input id="np-medical" type="text" placeholder="e.g. Peanut allergy (leave blank if none)" autocomplete="off" autocorrect="off"></div>
     <div class="modal-actions">
-      <button class="btn-m btn-m-cancel" onclick="closeLabelModal()">Cancel</button>
-      <button class="btn-m btn-m-purple" onclick="printLabels()">Print Selected</button>
+      <button class="btn-m btn-m-cancel" onclick="closeNewPersonModal()">Cancel</button>
+      <button class="btn-m btn-m-amber"  onclick="signInNewChild()">Sign In and Save</button>
     </div>
   </div>
 </div>
@@ -249,35 +278,63 @@ footer{background:var(--white);border-top:2px solid var(--border);padding:12px 1
 <div class="modal-overlay" id="editModal">
   <div class="modal-box">
     <h2>Edit Child</h2>
-    <div class="edit-field"><label>Full Name</label>
+    <p class="modal-sub">Update the details below.</p>
+    <div class="modal-field"><label>Full name</label>
       <input id="e-name" type="text" autocorrect="off"></div>
-    <div class="edit-field"><label>Age</label>
-      <select id="e-age">
-        <option value="" disabled>Age</option>
-        <option>2</option><option>3</option><option>4</option><option>5</option>
-        <option>6</option><option>7</option><option>8</option>
-        <option>9</option><option>10</option><option>11</option>
-      </select></div>
-    <div class="edit-field"><label>Parent / Guardian</label>
+    <div class="modal-field"><label>Date of birth</label>
+      <input id="e-dob" type="date"></div>
+    <div class="modal-field"><label>Parent / guardian</label>
       <input id="e-guardian" type="text" autocorrect="off"></div>
-    <div class="edit-field"><label>Contact Number</label>
+    <div class="modal-field"><label>Contact number</label>
       <input id="e-contact" type="tel"></div>
-    <div class="modal-actions" style="margin-top:16px">
+    <div class="modal-field"><label>Allergies / Medical Notes</label>
+      <input id="e-medical" type="text" placeholder="Leave blank if none" autocomplete="off" autocorrect="off"></div>
+    <div class="modal-actions">
       <button class="btn-m btn-m-cancel" onclick="closeEditModal()">Cancel</button>
-      <button class="btn-m btn-m-blue"   onclick="saveEdit()">Save</button>
+      <button class="btn-m btn-m-blue"   onclick="saveEdit()">Save Changes</button>
     </div>
   </div>
 </div>
 
-<!-- NEW WEEK MODAL -->
+<!-- NEW WEEK / UPLOAD MODAL -->
 <div class="modal-overlay" id="newWeekModal">
   <div class="modal-box">
-    <h2>Start a New Week</h2>
-    <p class="modal-sub">This will save this week to the Google Sheet and clear today's sign-in list.</p>
+    <h2>Upload to Google Sheets</h2>
+    <p class="modal-sub">This saves this week's attendance to Google Sheets and clears the sign-in list for next Sunday.</p>
     <div class="nw-summary" id="nwSummary"></div>
     <div class="modal-actions">
       <button class="btn-m btn-m-cancel" style="flex:1 1 100%" onclick="closeNewWeekModal()">Cancel</button>
-      <button class="btn-m btn-m-green"  style="flex:1 1 100%" onclick="doNewWeek()">Save to Google Sheets and Clear</button>
+      <button class="btn-m btn-m-green"  style="flex:1 1 100%" onclick="doNewWeek()">Upload and Clear List</button>
+    </div>
+  </div>
+</div>
+
+<!-- LABEL MODAL -->
+<div class="modal-overlay" id="labelModal">
+  <div class="modal-box">
+    <h2>Print Name Tag Labels</h2>
+    <p class="modal-sub">Tap to select or deselect. Children currently signed in are pre-selected.</p>
+    <div class="label-grid" id="labelGrid"></div>
+    <div class="modal-actions">
+      <button class="btn-m btn-m-cancel" onclick="closeLabelModal()">Cancel</button>
+      <button class="btn-m btn-m-blue"   onclick="printLabels()">Print Selected</button>
+    </div>
+  </div>
+</div>
+
+
+<!-- UPDATE PROMPT MODAL -->
+<div class="modal-overlay" id="updatePromptModal">
+  <div class="modal-box">
+    <h2>Just a quick update</h2>
+    <p class="modal-sub">We are missing a few details for <strong id="upName"></strong>. Please fill these in — we will not ask again.</p>
+    <div id="upDobWrap" class="modal-field"><label>Date of birth</label>
+      <input id="up-dob" type="date"></div>
+    <div class="modal-field"><label>Allergies / Medical Notes</label>
+      <input id="up-medical" type="text" placeholder="Leave blank if none" autocomplete="off" autocorrect="off"></div>
+    <div class="modal-actions">
+      <button class="btn-m btn-m-cancel" onclick="skipUpdatePrompt()">Skip for now</button>
+      <button class="btn-m btn-m-amber"  onclick="saveUpdatePrompt()">Save and Sign In</button>
     </div>
   </div>
 </div>
@@ -290,9 +347,19 @@ var SHEETS_URL_KEY = 'kidsSheetUrl';
 var registry = [];
 var signedIn  = [];
 var editingId = null;
-var newFormOpen = false;
 
 function getUrl() { return localStorage.getItem(SHEETS_URL_KEY) || ''; }
+
+function calcAge(dob) {
+  if (!dob) return '';
+  var today = new Date();
+  var b = new Date(dob);
+  if (isNaN(b.getTime())) return '';
+  var age = today.getFullYear() - b.getFullYear();
+  var m = today.getMonth() - b.getMonth();
+  if (m < 0 || (m === 0 && today.getDate() < b.getDate())) age--;
+  return age < 0 ? '' : String(age);
+}
 
 function api(params, callback) {
   var url = getUrl();
@@ -304,12 +371,8 @@ function api(params, callback) {
   xhr.open('GET', url + '?' + qs, true);
   xhr.onreadystatechange = function() {
     if (xhr.readyState === 4) {
-      try {
-        var res = JSON.parse(xhr.responseText);
-        callback(null, res);
-      } catch(e) {
-        callback('Could not read response: ' + xhr.responseText.substring(0, 100));
-      }
+      try { callback(null, JSON.parse(xhr.responseText)); }
+      catch(e) { callback('Could not read response: ' + xhr.responseText.substring(0,100)); }
     }
   };
   xhr.onerror = function() { callback('Connection error. Check your internet connection.'); };
@@ -334,6 +397,9 @@ function todayDate() {
 function shortDate() {
   return new Date().toLocaleDateString('en-AU',{day:'2-digit',month:'2-digit',year:'numeric'});
 }
+function shortDateDisplay() {
+  return new Date().toLocaleDateString('en-AU',{day:'2-digit',month:'2-digit',year:'numeric'});
+}
 
 function switchTab(name) {
   var names = ['signin','manage','settings'];
@@ -349,9 +415,10 @@ function switchTab(name) {
 }
 
 function updateHeader() {
-  document.getElementById('dateBadge').textContent = todayDate();
-  var n = signedIn.filter(function(c){ return c.status === 'in'; }).length;
-  document.getElementById('childCount').textContent = n === 0 ? '0 present' : n + ' present';
+  document.getElementById('dateBadge').textContent = shortDateDisplay();
+  var present = signedIn.filter(function(c){ return c.status === 'in'; }).length;
+  document.getElementById('presentCount').textContent = present;
+  document.getElementById('registeredCount').textContent = registry.length;
 }
 
 function loadData() {
@@ -372,19 +439,27 @@ function hideLoading() {
   if (ls) ls.style.display = 'none';
 }
 
+function surname(n) { var p = n.trim().split(' '); return p[p.length-1]; }
+
 function renderQuick() {
-  var scroll = document.getElementById('quickScroll');
+  var scroll  = document.getElementById('quickScroll');
+  var query   = (document.getElementById('searchBox').value || '').toLowerCase().trim();
   hideLoading();
+
   if (!getUrl()) {
     scroll.innerHTML = '<div class="empty-state"><div class="icon">&#9881;</div><p>Go to <strong>Settings</strong> and enter your Google Sheets URL to get started.</p></div>';
     updateHeader(); return;
   }
   if (!registry.length) {
-    scroll.innerHTML = '<div class="empty-state"><div class="icon">&#128075;</div><p>No children registered yet.<br>Use <strong>First visit? Sign in here</strong> below.</p></div>';
+    scroll.innerHTML = '<div class="empty-state"><div class="icon">&#128105;&#8205;&#128103;</div><p>No one registered yet.<br>Tap <strong>+ New Person</strong> to add someone.</p></div>';
     updateHeader(); return;
   }
-  function surname(n){ var p = n.trim().split(' '); return p[p.length-1]; }
-  var sorted = registry.slice().sort(function(a,b){ return surname(a.name).localeCompare(surname(b.name)); });
+
+  var filtered = registry.filter(function(c){
+    return !query || c.name.toLowerCase().indexOf(query) !== -1;
+  });
+
+  var sorted = filtered.slice().sort(function(a,b){ return surname(a.name).localeCompare(surname(b.name)); });
   var inList = [], waitList = [], outList = [];
   sorted.forEach(function(child){
     var entry = null;
@@ -395,21 +470,26 @@ function renderQuick() {
     else if (entry.status === 'in') inList.push({child:child, entry:entry});
     else                            outList.push({child:child, entry:entry});
   });
+
   var html = '';
-  if (inList.length) {
-    html += '<div class="section-label">Signed in today</div><div class="quick-grid">';
-    inList.forEach(function(x){ html += cardHtml(x.child, x.entry, 'signed-in'); });
-    html += '</div>';
-  }
-  if (waitList.length) {
-    html += '<div class="section-label">Tap to sign in</div><div class="quick-grid">';
-    waitList.forEach(function(x){ html += cardHtml(x.child, null, 'none'); });
-    html += '</div>';
-  }
-  if (outList.length) {
-    html += '<div class="section-label">Signed out</div><div class="quick-grid">';
-    outList.forEach(function(x){ html += cardHtml(x.child, x.entry, 'signed-out'); });
-    html += '</div>';
+  if (!filtered.length) {
+    html = '<div class="empty-state"><div class="icon">&#128269;</div><p>No results for "' + esc(query) + '"</p></div>';
+  } else {
+    if (inList.length) {
+      html += '<div class="section-label">Signed in today</div><div class="quick-grid">';
+      inList.forEach(function(x){ html += cardHtml(x.child, x.entry, 'signed-in'); });
+      html += '</div>';
+    }
+    if (waitList.length) {
+      html += '<div class="section-label">Tap to sign in</div><div class="quick-grid">';
+      waitList.forEach(function(x){ html += cardHtml(x.child, null, 'none'); });
+      html += '</div>';
+    }
+    if (outList.length) {
+      html += '<div class="section-label">Signed out</div><div class="quick-grid">';
+      outList.forEach(function(x){ html += cardHtml(x.child, x.entry, 'signed-out'); });
+      html += '</div>';
+    }
   }
   scroll.innerHTML = html;
   updateHeader();
@@ -417,6 +497,7 @@ function renderQuick() {
 
 function cardHtml(child, entry, state) {
   var id = child.id, statusText = '', btns = '', cls = '';
+  var age = child.dob ? calcAge(child.dob) : (child.age || '');
   if (state === 'signed-in') {
     cls = 'signed-in'; statusText = 'In since ' + entry.timeIn;
     btns = '<div class="qc-btn-row">'
@@ -431,9 +512,66 @@ function cardHtml(child, entry, state) {
   var click = state === 'none' ? 'onclick="quickSignIn(\'' + id + '\')"' : '';
   return '<div class="quick-card ' + cls + '" ' + click + '>'
     + '<div class="qc-name">' + esc(child.name) + '</div>'
-    + '<div class="qc-detail">Age ' + esc(child.age) + ' - ' + esc(child.guardian) + '</div>'
+    + '<div class="qc-detail">' + (age ? 'Age ' + age : '') + (age && child.guardian ? ' - ' : '') + esc(child.guardian) + '</div>'
     + '<div class="qc-status">' + statusText + '</div>'
+    + (child.medical ? '<div class="medical-badge">&#9888; ' + esc(child.medical) + '</div>' : '')
     + btns + '</div>';
+}
+
+
+/* UPDATE PROMPT */
+var pendingSignInId = null;
+
+function needsUpdate(child) {
+  return !child.dob || child.medical === undefined || child.medical === null;
+}
+
+function openUpdatePrompt(child) {
+  pendingSignInId = child.id;
+  document.getElementById('upName').textContent = child.name;
+  // Show/hide DOB field depending on whether it is missing
+  var dobWrap = document.getElementById('upDobWrap');
+  if (child.dob) {
+    dobWrap.style.display = 'none';
+    document.getElementById('up-dob').value = child.dob;
+  } else {
+    dobWrap.style.display = '';
+    document.getElementById('up-dob').value = '';
+  }
+  document.getElementById('up-medical').value = child.medical || '';
+  document.getElementById('updatePromptModal').classList.add('open');
+}
+
+function skipUpdatePrompt() {
+  document.getElementById('updatePromptModal').classList.remove('open');
+  if (pendingSignInId) {
+    doQuickSignIn(pendingSignInId);
+    pendingSignInId = null;
+  }
+}
+
+function saveUpdatePrompt() {
+  var dob     = document.getElementById('up-dob').value;
+  var medical = document.getElementById('up-medical').value.trim();
+  var child   = null;
+  for (var i = 0; i < registry.length; i++){ if (registry[i].id === pendingSignInId){ child = registry[i]; break; } }
+  if (!child) { skipUpdatePrompt(); return; }
+  // DOB is required if it was missing
+  if (!child.dob && !dob) { alert('Please enter a date of birth.'); return; }
+  var newDob = dob || child.dob;
+  var age    = calcAge(newDob);
+  document.getElementById('updatePromptModal').classList.remove('open');
+  // Save updated details to Google Sheets
+  api({action:'updateChild', id:child.id, name:child.name, dob:newDob, age:age, guardian:child.guardian, contact:child.contact, medical:medical}, function(err, res){
+    if (!err && res.success) {
+      child.dob     = newDob;
+      child.age     = age;
+      child.medical = medical;
+    }
+    // Sign in regardless of whether update succeeded
+    doQuickSignIn(pendingSignInId);
+    pendingSignInId = null;
+  });
 }
 
 function quickSignIn(regId) {
@@ -442,9 +580,10 @@ function quickSignIn(regId) {
   if (!child) return;
   for (var j = 0; j < signedIn.length; j++){ if (signedIn[j].registryId === regId){ showToast(child.name + ' is already signed in.'); return; } }
   showToast('Signing in ' + child.name + '...');
-  api({action:'signIn', registryId:regId, name:child.name, age:child.age, guardian:child.guardian, contact:child.contact}, function(err, res){
+  var age = child.dob ? calcAge(child.dob) : (child.age || '');
+  api({action:'signIn', registryId:regId, name:child.name, dob:child.dob||'', age:age, guardian:child.guardian, contact:child.contact}, function(err, res){
     if (err || !res.success) { showToast('Error: ' + (err || res.message)); return; }
-    signedIn.push({registryId:regId, name:child.name, age:child.age, guardian:child.guardian, contact:child.contact, timeIn:res.timeIn, timeOut:'', status:'in'});
+    signedIn.push({registryId:regId, name:child.name, dob:child.dob||'', age:age, guardian:child.guardian, contact:child.contact, timeIn:res.timeIn, timeOut:'', status:'in'});
     showToast(child.name + ' signed in!');
     renderQuick();
   });
@@ -460,48 +599,50 @@ function quickSignOut(regId) {
   });
 }
 
-function toggleNewForm() {
-  newFormOpen = !newFormOpen;
-  document.getElementById('newChildForm').classList.toggle('open', newFormOpen);
-  document.getElementById('toggleArrow').classList.toggle('open', newFormOpen);
-  if (newFormOpen) setTimeout(function(){ document.getElementById('nc-name').focus(); }, 50);
+/* NEW PERSON MODAL */
+function openNewPersonModal() {
+  document.getElementById('np-name').value    = '';
+  document.getElementById('np-dob').value     = '';
+  document.getElementById('np-guardian').value= '';
+  document.getElementById('np-contact').value = '';
+  document.getElementById('newPersonModal').classList.add('open');
+  setTimeout(function(){ document.getElementById('np-name').focus(); }, 50);
 }
+function closeNewPersonModal(){ document.getElementById('newPersonModal').classList.remove('open'); }
 
 function signInNewChild() {
-  var name     = document.getElementById('nc-name').value.trim();
-  var age      = document.getElementById('nc-age').value;
-  var guardian = document.getElementById('nc-guardian').value.trim();
-  var contact  = document.getElementById('nc-contact').value.trim();
+  var name     = document.getElementById('np-name').value.trim();
+  var dob      = document.getElementById('np-dob').value;
+  var guardian = document.getElementById('np-guardian').value.trim();
+  var contact  = document.getElementById('np-contact').value.trim();
+  var medical  = document.getElementById('np-medical').value.trim();
   if (!name)     { alert('Please enter the child\'s name.'); return; }
-  if (!age)      { alert('Please select an age.'); return; }
+  if (!dob)      { alert('Please enter a date of birth.'); return; }
   if (!guardian) { alert('Please enter a parent or guardian name.'); return; }
   if (!contact)  { alert('Please enter a contact number.'); return; }
-  showToast('Saving...');
-  api({action:'addChild', name:name, age:age, guardian:guardian, contact:contact}, function(err, res){
+  var age = calcAge(dob);
+  closeNewPersonModal();
+  showToast('Saving ' + name + '...');
+  api({action:'addChild', name:name, dob:dob, age:age, guardian:guardian, contact:contact, medical:medical}, function(err, res){
     if (err) { showToast('Error: ' + err); return; }
     var regId = res.id;
-    if (!res.success && res.id) {
+    if (res.success) {
+      registry.push({id:regId, name:name, dob:dob, age:age, guardian:guardian, contact:contact, medical:medical});
+    } else if (res.id) {
       regId = res.id;
-    } else if (!res.success) {
-      showToast('Error: ' + res.message); return;
     } else {
-      registry.push({id:regId, name:name, age:age, guardian:guardian, contact:contact});
+      showToast('Error: ' + res.message); return;
     }
-    api({action:'signIn', registryId:regId, name:name, age:age, guardian:guardian, contact:contact}, function(err2, res2){
+    api({action:'signIn', registryId:regId, name:name, dob:dob, age:age, guardian:guardian, contact:contact}, function(err2, res2){
       if (err2 || !res2.success) { showToast('Saved but could not sign in: ' + (err2 || res2.message)); return; }
-      signedIn.push({registryId:regId, name:name, age:age, guardian:guardian, contact:contact, timeIn:res2.timeIn, timeOut:'', status:'in'});
-      document.getElementById('nc-name').value = '';
-      document.getElementById('nc-age').value  = '';
-      syncSelectColour(document.getElementById('nc-age'));
-      document.getElementById('nc-guardian').value = '';
-      document.getElementById('nc-contact').value  = '';
-      if (newFormOpen) toggleNewForm();
-      showToast(name + ' signed in and saved!');
+      signedIn.push({registryId:regId, name:name, dob:dob, age:age, guardian:guardian, contact:contact, medical:medical, timeIn:res2.timeIn, timeOut:'', status:'in'});
+      showToast(name + ' signed in!');
       renderQuick(); updateHeader();
     });
   });
 }
 
+/* REGISTER */
 function renderRegister() {
   var list = document.getElementById('regList');
   if (!registry.length) {
@@ -509,12 +650,13 @@ function renderRegister() {
       + '<p>No children registered yet.<br>They appear here after their first sign-in.</p></div>';
     return;
   }
-  function surnameReg(n){ var p = n.trim().split(' '); return p[p.length-1]; }
-  var sorted = registry.slice().sort(function(a,b){ return surnameReg(a.name).localeCompare(surnameReg(b.name)); });
+  var sorted = registry.slice().sort(function(a,b){ return surname(a.name).localeCompare(surname(b.name)); });
   list.innerHTML = sorted.map(function(c){
+    var age = c.dob ? calcAge(c.dob) : (c.age || '');
     return '<div class="reg-item">'
       + '<div><div class="ri-name">' + esc(c.name) + '</div>'
-      + '<div class="ri-detail">Age ' + esc(c.age) + ' - ' + esc(c.guardian) + (c.contact ? ' - ' + esc(c.contact) : '') + '</div></div>'
+      + '<div class="ri-detail">' + (age ? 'Age ' + age : '') + (age ? ' - ' : '') + esc(c.guardian) + (c.contact ? ' - ' + esc(c.contact) : '') + '</div>'
+      + (c.medical ? '<div class="medical-badge" style="margin-top:5px;">&#9888; ' + esc(c.medical) + '</div>' : '') + '</div>'
       + '<div class="reg-actions">'
         + '<button class="btn-edit" onclick="openEdit(\'' + c.id + '\')">Edit</button>'
         + '<button class="btn-rm"   onclick="removeFromRegister(\'' + c.id + '\')">Remove</button>'
@@ -524,19 +666,21 @@ function renderRegister() {
 
 function addToRegister() {
   var name     = document.getElementById('m-name').value.trim();
-  var age      = document.getElementById('m-age').value;
+  var dob      = document.getElementById('m-dob').value;
   var guardian = document.getElementById('m-guardian').value.trim();
   var contact  = document.getElementById('m-contact').value.trim();
-  if (!name||!age||!guardian||!contact){ alert('Please fill in all fields.'); return; }
-  api({action:'addChild', name:name, age:age, guardian:guardian, contact:contact}, function(err, res){
+  var medical  = document.getElementById('m-medical').value.trim();
+  if (!name||!dob||!guardian||!contact){ alert('Please fill in name, date of birth, guardian and contact.'); return; }
+  var age = calcAge(dob);
+  api({action:'addChild', name:name, dob:dob, age:age, guardian:guardian, contact:contact, medical:medical}, function(err, res){
     if (err || !res.success) { showToast('Error: ' + (err || res.message)); return; }
-    registry.push({id:res.id, name:name, age:age, guardian:guardian, contact:contact});
-    document.getElementById('m-name').value = '';
-    document.getElementById('m-age').value  = '';
-    syncSelectColour(document.getElementById('m-age'));
-    document.getElementById('m-guardian').value = '';
-    document.getElementById('m-contact').value  = '';
-    renderRegister(); showToast(name + ' added to register.');
+    registry.push({id:res.id, name:name, dob:dob, age:age, guardian:guardian, contact:contact, medical:medical});
+    document.getElementById('m-name').value    = '';
+    document.getElementById('m-dob').value     = '';
+    document.getElementById('m-guardian').value= '';
+    document.getElementById('m-contact').value = '';
+    document.getElementById('m-medical').value = '';
+    renderRegister(); updateHeader(); showToast(name + ' added to register.');
   });
 }
 
@@ -548,20 +692,21 @@ function removeFromRegister(id) {
   api({action:'removeChild', id:id}, function(err, res){
     if (err || !res.success) { showToast('Error: ' + (err || res.message)); return; }
     registry = registry.filter(function(c){ return c.id !== id; });
-    renderRegister(); renderQuick(); showToast(child.name + ' removed.');
+    renderRegister(); renderQuick(); updateHeader(); showToast(child.name + ' removed.');
   });
 }
 
+/* EDIT MODAL */
 function openEdit(id) {
   var c = null;
   for (var i = 0; i < registry.length; i++){ if (registry[i].id === id){ c = registry[i]; break; } }
   if (!c) return;
   editingId = id;
   document.getElementById('e-name').value     = c.name;
-  document.getElementById('e-age').value      = c.age;
-  syncSelectColour(document.getElementById('e-age'));
+  document.getElementById('e-dob').value      = c.dob || '';
   document.getElementById('e-guardian').value = c.guardian;
   document.getElementById('e-contact').value  = c.contact || '';
+  document.getElementById('e-medical').value  = c.medical || '';
   document.getElementById('editModal').classList.add('open');
 }
 function closeEditModal(){ document.getElementById('editModal').classList.remove('open'); editingId = null; }
@@ -570,18 +715,20 @@ function saveEdit() {
   for (var i = 0; i < registry.length; i++){ if (registry[i].id === editingId){ c = registry[i]; break; } }
   if (!c) return;
   var name     = document.getElementById('e-name').value.trim();
-  var age      = document.getElementById('e-age').value;
+  var dob      = document.getElementById('e-dob').value;
   var guardian = document.getElementById('e-guardian').value.trim();
   var contact  = document.getElementById('e-contact').value.trim();
-  if (!name||!age||!guardian||!contact){ alert('Please fill in all fields.'); return; }
-  api({action:'updateChild', id:editingId, name:name, age:age, guardian:guardian, contact:contact}, function(err, res){
+  if (!name||!dob||!guardian||!contact){ alert('Please fill in all fields.'); return; }
+  var age = calcAge(dob);
+  api({action:'updateChild', id:editingId, name:name, dob:dob, age:age, guardian:guardian, contact:contact, medical:medical}, function(err, res){
     if (err || !res.success) { showToast('Error: ' + (err || res.message)); return; }
-    c.name = name; c.age = age; c.guardian = guardian; c.contact = contact;
-    signedIn.forEach(function(t){ if (t.registryId === editingId){ t.name=name; t.age=age; t.guardian=guardian; t.contact=contact; } });
+    c.name = name; c.dob = dob; c.age = age; c.guardian = guardian; c.contact = contact; c.medical = medical;
+    signedIn.forEach(function(t){ if (t.registryId === editingId){ t.name=name; t.dob=dob; t.age=age; t.guardian=guardian; t.contact=contact; t.medical=medical; } });
     closeEditModal(); renderRegister(); renderQuick(); showToast('Details updated.');
   });
 }
 
+/* NEW WEEK */
 function openNewWeekModal() {
   if (!signedIn.length){ alert('No children are signed in today.'); return; }
   var present   = signedIn.filter(function(c){ return c.status === 'in'; }).length;
@@ -592,18 +739,18 @@ function openNewWeekModal() {
   document.getElementById('newWeekModal').classList.add('open');
 }
 function closeNewWeekModal(){ document.getElementById('newWeekModal').classList.remove('open'); }
-
 function doNewWeek() {
   closeNewWeekModal();
-  showToast('Saving to Google Sheets...');
+  showToast('Uploading to Google Sheets...');
   api({action:'newWeek'}, function(err, res){
     if (err || !res.success) { showToast('Error: ' + (err || res.message)); return; }
     signedIn = [];
     renderQuick(); updateHeader();
-    showToast('Saved to Google Sheets! List cleared.');
+    showToast('Uploaded! List cleared for next Sunday.');
   });
 }
 
+/* SETTINGS */
 function loadSettingsTab() {
   var url = getUrl();
   document.getElementById('sheetsUrl').value = url;
@@ -624,21 +771,26 @@ function setUrlStatus(msg, colour) {
   el.textContent = msg; el.style.color = colour || 'var(--muted)';
 }
 
+/* LABELS */
 function openLabelModal() {
-  if (!signedIn.length){ alert('No children are signed in today.'); return; }
+  var present = signedIn.filter(function(c){ return c.status === 'in'; });
+  if (!present.length){ alert('No children are currently signed in.'); return; }
   var grid = document.getElementById('labelGrid');
-  grid.innerHTML = signedIn.map(function(c, i){
-    return '<div class="lp' + (c.status === 'in' ? ' selected' : '') + '" id="lp-' + i + '" onclick="this.classList.toggle(\'selected\')">'
+  grid.innerHTML = present.map(function(c, i){
+    var age = c.dob ? calcAge(c.dob) : (c.age || '');
+    return '<div class="lp selected" id="lp-' + i + '" onclick="this.classList.toggle(\'selected\')">'
       + '<div class="lp-name">' + esc(c.name) + '</div>'
-      + '<div class="lp-detail">Age ' + esc(c.age) + ' - ' + esc(c.guardian) + '</div>'
+      + '<div class="lp-detail">' + (age ? 'Age ' + age : '') + (age && c.guardian ? ' - ' : '') + esc(c.guardian) + '</div>'
       + '<div class="lp-church">The Fields Church</div>'
     + '</div>';
   }).join('');
   document.getElementById('labelModal').classList.add('open');
+  document.getElementById('labelModal').dataset.present = JSON.stringify(present);
 }
 function closeLabelModal(){ document.getElementById('labelModal').classList.remove('open'); }
 function printLabels() {
-  var selected = signedIn.filter(function(_, i){
+  var present = JSON.parse(document.getElementById('labelModal').dataset.present || '[]');
+  var selected = present.filter(function(_, i){
     var el = document.getElementById('lp-' + i); return el && el.classList.contains('selected');
   });
   if (!selected.length){ alert('Please select at least one label.'); return; }
@@ -647,34 +799,29 @@ function printLabels() {
 function printOneLabel(regId) {
   var entry = null;
   for (var i = 0; i < signedIn.length; i++){ if (signedIn[i].registryId === regId){ entry = signedIn[i]; break; } }
-  if (!entry){ alert('Child not found in today\'s list.'); return; }
+  if (!entry){ alert('Child not found.'); return; }
   buildPrintArea([entry]); setTimeout(function(){ window.print(); }, 100);
 }
 function buildPrintArea(list) {
   document.getElementById('labelPrintArea').innerHTML = list.map(function(c){
+    var age = c.dob ? calcAge(c.dob) : (c.age || '');
     return '<div class="print-label">'
       + '<div class="pl-name">' + esc(c.name) + '</div>'
-      + '<div class="pl-detail">Age ' + esc(c.age) + ' - ' + esc(c.guardian) + '</div>'
+      + '<div class="pl-detail">' + (age ? 'Age ' + age + ' - ' : '') + esc(c.guardian) + '</div>'
       + '<div class="pl-church">The Fields Church - Kids Church</div>'
     + '</div>';
   }).join('');
 }
 
-function syncSelectColour(el){ if(el) el.classList.toggle('empty', el.value === ''); }
-['nc-age','m-age','e-age'].forEach(function(id){
-  var el = document.getElementById(id);
-  if (!el) return;
-  syncSelectColour(el);
-  el.addEventListener('change', function(){ syncSelectColour(this); });
-});
-
-['labelModal','editModal','newWeekModal'].forEach(function(id){
+/* MODAL BACKDROPS */
+['newPersonModal','editModal','newWeekModal','labelModal','updatePromptModal'].forEach(function(id){
   document.getElementById(id).addEventListener('click', function(e){
     if (e.target === this) this.classList.remove('open');
   });
 });
 
-updateHeader();
+/* INIT */
+document.getElementById('dateBadge').textContent = shortDateDisplay();
 loadData();
 </script>
 </body>
