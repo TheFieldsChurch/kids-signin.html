@@ -379,6 +379,15 @@ function api(params, callback) {
   xhr.send();
 }
 
+
+function saveLocalSignIns() {
+  localStorage.setItem('kidsSignedInBackup', JSON.stringify(signedIn));
+}
+
+function clearLocalSignIns() {
+  localStorage.removeItem('kidsSignedInBackup');
+}
+
 function showToast(msg) {
   var t = document.getElementById('toast');
   t.textContent = msg; t.classList.add('show');
@@ -429,6 +438,19 @@ function loadData() {
     if (!res.success) { showToast('Error: ' + res.message); return; }
     registry = res.registry || [];
     signedIn  = res.today   || [];
+    // If Google Sheets has no sign-ins today, check for a local backup
+    if (!signedIn.length) {
+      var backup = localStorage.getItem('kidsSignedInBackup');
+      if (backup) {
+        try {
+          var backupData = JSON.parse(backup);
+          if (backupData.length) {
+            signedIn = backupData;
+            showToast('Restored ' + backupData.length + ' unsync'd sign-ins from last session.');
+          }
+        } catch(e) {}
+      }
+    }
     renderQuick();
     updateHeader();
   });
@@ -592,6 +614,7 @@ function doQuickSignIn(regId) {
   api({action:'signIn', registryId:regId, name:child.name, dob:child.dob||'', age:age, guardian:child.guardian, contact:child.contact, medical:child.medical||''}, function(err, res){
     if (err || !res.success) { showToast('Error: ' + (err || res.message)); return; }
     signedIn.push({registryId:regId, name:child.name, dob:child.dob||'', age:age, guardian:child.guardian, contact:child.contact, medical:child.medical||'', timeIn:res.timeIn, timeOut:'', status:'in'});
+    saveLocalSignIns();
     showToast(child.name + ' signed in!');
     renderQuick();
   });
@@ -603,6 +626,7 @@ function quickSignOut(regId) {
     for (var i = 0; i < signedIn.length; i++){
       if (signedIn[i].registryId === regId){ signedIn[i].status = 'out'; signedIn[i].timeOut = res.timeOut; break; }
     }
+    saveLocalSignIns();
     renderQuick();
   });
 }
@@ -644,6 +668,7 @@ function signInNewChild() {
     api({action:'signIn', registryId:regId, name:name, dob:dob, age:age, guardian:guardian, contact:contact}, function(err2, res2){
       if (err2 || !res2.success) { showToast('Saved but could not sign in: ' + (err2 || res2.message)); return; }
       signedIn.push({registryId:regId, name:name, dob:dob, age:age, guardian:guardian, contact:contact, medical:medical, timeIn:res2.timeIn, timeOut:'', status:'in'});
+      saveLocalSignIns();
       showToast(name + ' signed in!');
       renderQuick(); updateHeader();
     });
@@ -753,6 +778,7 @@ function doNewWeek() {
   api({action:'newWeek'}, function(err, res){
     if (err || !res.success) { showToast('Error: ' + (err || res.message)); return; }
     signedIn = [];
+    clearLocalSignIns();
     renderQuick(); updateHeader();
     showToast('Uploaded! List cleared for next Sunday.');
   });
