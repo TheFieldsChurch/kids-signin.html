@@ -299,6 +299,10 @@
       <label>Contact Number *</label>
       <input type="tel" id="m-contact" placeholder="04xx xxx xxx">
     </div>
+    <div class="form-group">
+      <label>Allergies / Medical Notes</label>
+      <input type="text" id="m-allergies" placeholder="e.g. Peanuts, asthma — or leave blank if none">
+    </div>
     <div style="display:flex; gap:10px; margin-top:4px;">
       <button class="btn btn-primary" style="flex:1" onclick="saveModal()">Save</button>
       <button class="btn btn-outline" style="flex:1" onclick="closeModal()">Cancel</button>
@@ -323,7 +327,7 @@
 
 <script>
 // ─── STATE ───────────────────────────────────────────────────────────────────
-var register = [];   // [{id, first, last, dob, guardian, contact}]
+var register = [];   // [{id, first, last, dob, guardian, contact, allergies}]
 var today    = [];   // [id, id, …]  — IDs of those present
 var editId   = null; // currently editing
 
@@ -387,6 +391,7 @@ function renderSignIn() {
         '<div class="pname">' + p.first + '</div>' +
         '<div class="pname" style="font-size:0.82rem; font-weight:600; color:var(--muted);">' + p.last + '</div>' +
         '<div class="psub">Age ' + calcAge(p.dob) + '</div>' +
+        (p.allergies ? '<div class="psub" style="color:#c62828; font-weight:700;">⚠️ ' + p.allergies + '</div>' : '') +
         (present ? '<div class="pbadge">✓ Present</div>' : '') +
       '</div>';
     }).join('');
@@ -407,7 +412,7 @@ function renderRegister() {
     return '<div class="register-row">' +
       '<div class="register-info">' +
         '<div class="rname">' + p.last + ', ' + p.first + '</div>' +
-        '<div class="rsub">Age ' + calcAge(p.dob) + ' · DOB ' + formatDob(p.dob) + ' · ' + p.guardian + ' · ' + p.contact + '</div>' +
+        '<div class="rsub">Age ' + calcAge(p.dob) + ' · DOB ' + formatDob(p.dob) + ' · ' + p.guardian + ' · ' + p.contact + (p.allergies ? ' · ⚠️ ' + p.allergies : '') + '</div>' +
       '</div>' +
       '<div class="register-actions">' +
         '<button class="btn btn-outline btn-sm" onclick="openEditModal(\'' + p.id + '\')">Edit</button>' +
@@ -448,7 +453,8 @@ function openAddModal() {
   document.getElementById('modal-title').textContent = 'Add New Person';
   document.getElementById('m-first').value    = '';
   document.getElementById('m-last').value     = '';
-  document.getElementById('m-dob').value      = '';
+  document.getElementById('m-dob').value       = '';
+  document.getElementById('m-allergies').value = '';
   document.getElementById('m-guardian').value = '';
   document.getElementById('m-contact').value  = '';
   document.getElementById('modal-overlay').classList.add('open');
@@ -461,7 +467,8 @@ function openEditModal(id) {
   document.getElementById('modal-title').textContent = 'Edit ' + p.first + ' ' + p.last;
   document.getElementById('m-first').value    = p.first;
   document.getElementById('m-last').value     = p.last;
-  document.getElementById('m-dob').value      = p.dob || '';
+  document.getElementById('m-dob').value       = p.dob || '';
+  document.getElementById('m-allergies').value = p.allergies || '';
   document.getElementById('m-guardian').value = p.guardian;
   document.getElementById('m-contact').value  = p.contact;
   document.getElementById('modal-overlay').classList.add('open');
@@ -475,19 +482,20 @@ function closeModalOnOverlay(e) {
 function saveModal() {
   var first    = document.getElementById('m-first').value.trim();
   var last     = document.getElementById('m-last').value.trim();
-  var dob      = document.getElementById('m-dob').value;
-  var guardian = document.getElementById('m-guardian').value.trim();
-  var contact  = document.getElementById('m-contact').value.trim();
+  var dob       = document.getElementById('m-dob').value;
+  var guardian  = document.getElementById('m-guardian').value.trim();
+  var contact   = document.getElementById('m-contact').value.trim();
+  var allergies = document.getElementById('m-allergies').value.trim();
 
   if (!first || !last || !dob || !guardian || !contact) {
     showToast('Please fill in all required fields'); return;
   }
   if (editId) {
     var p = register.find(function(x){ return x.id === editId; });
-    if (p) { p.first = first; p.last = last; p.dob = dob; p.guardian = guardian; p.contact = contact; }
+    if (p) { p.first = first; p.last = last; p.dob = dob; p.guardian = guardian; p.contact = contact; p.allergies = allergies; }
     showToast('Updated ✓');
   } else {
-    register.push({ id: 'p' + Date.now(), first: first, last: last, dob: dob, guardian: guardian, contact: contact });
+    register.push({ id: 'p' + Date.now(), first: first, last: last, dob: dob, guardian: guardian, contact: contact, allergies: allergies });
     showToast(first + ' ' + last + ' added ✓');
   }
   saveLocal();
@@ -548,7 +556,7 @@ function doNewWeek() {
     people: register.map(function(p){
       return {
         id: p.id, first: p.first, last: p.last, dob: p.dob, age: calcAge(p.dob),
-        guardian: p.guardian, contact: p.contact,
+        guardian: p.guardian, contact: p.contact, allergies: p.allergies || '',
         present: today.includes(p.id) ? 'Yes' : 'No'  // today already cleared, so all No — use saved list
       };
     })
