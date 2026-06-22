@@ -222,6 +222,10 @@
     <div class="icon">👥</div>
     <p>No one registered yet.<br>Tap <strong>+ New Person</strong> to add someone.</p>
   </div>
+
+  <div style="margin-top:18px;">
+    <button class="btn btn-success btn-full" onclick="confirmNewWeek()">📤 Upload to Google Sheets</button>
+  </div>
 </div>
 
 <!-- REGISTER TAB -->
@@ -247,18 +251,13 @@
   </div>
 
   <div class="card">
-    <h2>🗓️ New Week</h2>
+    <h2>📤 Upload to Google Sheets</h2>
     <div class="new-week-box">
       <p>At the end of each Sunday, sync attendance to Google Sheets and clear the sign-in list ready for next week. Any young people still marked as present will be signed out first.</p>
       <button class="btn btn-success btn-full" onclick="confirmNewWeek()">📤 Sync to Google Sheets + Clear</button>
     </div>
   </div>
 
-  <div class="card">
-    <h2>🖨️ Print Labels</h2>
-    <p style="font-size:0.85rem; color:var(--muted); margin-bottom:12px;">Print name labels for everyone currently signed in.</p>
-    <button class="btn btn-outline btn-sm" onclick="printLabels()">🖨️ Print Today's Labels</button>
-  </div>
 
   <div class="card">
     <h2>☁️ Sync Register</h2>
@@ -288,19 +287,9 @@
         <input type="text" id="m-last" placeholder="Last name">
       </div>
     </div>
-    <div class="form-row">
-      <div class="form-group">
-        <label>Date of Birth *</label>
-        <input type="date" id="m-dob" max="">
-      </div>
-      <div class="form-group">
-        <label>Year Group</label>
-        <select id="m-year">
-          <option value="">Optional</option>
-          <option>Year 7</option><option>Year 8</option><option>Year 9</option>
-          <option>Year 10</option><option>Year 11</option><option>Year 12</option>
-        </select>
-      </div>
+    <div class="form-group">
+      <label>Date of Birth *</label>
+      <input type="date" id="m-dob" max="">
     </div>
     <div class="form-group">
       <label>Parent / Guardian *</label>
@@ -334,7 +323,7 @@
 
 <script>
 // ─── STATE ───────────────────────────────────────────────────────────────────
-var register = [];   // [{id, first, last, dob, year, guardian, contact}]
+var register = [];   // [{id, first, last, dob, guardian, contact}]
 var today    = [];   // [id, id, …]  — IDs of those present
 var editId   = null; // currently editing
 
@@ -397,7 +386,7 @@ function renderSignIn() {
       return '<div class="person-card' + (present ? ' present' : '') + '" onclick="togglePresent(\'' + p.id + '\')">' +
         '<div class="pname">' + p.first + '</div>' +
         '<div class="pname" style="font-size:0.82rem; font-weight:600; color:var(--muted);">' + p.last + '</div>' +
-        '<div class="psub">Age ' + calcAge(p.dob) + (p.year ? ' · ' + p.year : '') + '</div>' +
+        '<div class="psub">Age ' + calcAge(p.dob) + '</div>' +
         (present ? '<div class="pbadge">✓ Present</div>' : '') +
       '</div>';
     }).join('');
@@ -418,7 +407,7 @@ function renderRegister() {
     return '<div class="register-row">' +
       '<div class="register-info">' +
         '<div class="rname">' + p.last + ', ' + p.first + '</div>' +
-        '<div class="rsub">Age ' + calcAge(p.dob) + (p.year ? ' · ' + p.year : '') + ' · DOB ' + formatDob(p.dob) + ' · ' + p.guardian + ' · ' + p.contact + '</div>' +
+        '<div class="rsub">Age ' + calcAge(p.dob) + ' · DOB ' + formatDob(p.dob) + ' · ' + p.guardian + ' · ' + p.contact + '</div>' +
       '</div>' +
       '<div class="register-actions">' +
         '<button class="btn btn-outline btn-sm" onclick="openEditModal(\'' + p.id + '\')">Edit</button>' +
@@ -460,7 +449,6 @@ function openAddModal() {
   document.getElementById('m-first').value    = '';
   document.getElementById('m-last').value     = '';
   document.getElementById('m-dob').value      = '';
-  document.getElementById('m-year').value     = '';
   document.getElementById('m-guardian').value = '';
   document.getElementById('m-contact').value  = '';
   document.getElementById('modal-overlay').classList.add('open');
@@ -474,7 +462,6 @@ function openEditModal(id) {
   document.getElementById('m-first').value    = p.first;
   document.getElementById('m-last').value     = p.last;
   document.getElementById('m-dob').value      = p.dob || '';
-  document.getElementById('m-year').value     = p.year || '';
   document.getElementById('m-guardian').value = p.guardian;
   document.getElementById('m-contact').value  = p.contact;
   document.getElementById('modal-overlay').classList.add('open');
@@ -489,7 +476,6 @@ function saveModal() {
   var first    = document.getElementById('m-first').value.trim();
   var last     = document.getElementById('m-last').value.trim();
   var dob      = document.getElementById('m-dob').value;
-  var year     = document.getElementById('m-year').value;
   var guardian = document.getElementById('m-guardian').value.trim();
   var contact  = document.getElementById('m-contact').value.trim();
 
@@ -498,10 +484,10 @@ function saveModal() {
   }
   if (editId) {
     var p = register.find(function(x){ return x.id === editId; });
-    if (p) { p.first = first; p.last = last; p.dob = dob; p.year = year; p.guardian = guardian; p.contact = contact; }
+    if (p) { p.first = first; p.last = last; p.dob = dob; p.guardian = guardian; p.contact = contact; }
     showToast('Updated ✓');
   } else {
-    register.push({ id: 'p' + Date.now(), first: first, last: last, dob: dob, year: year, guardian: guardian, contact: contact });
+    register.push({ id: 'p' + Date.now(), first: first, last: last, dob: dob, guardian: guardian, contact: contact });
     showToast(first + ' ' + last + ' added ✓');
   }
   saveLocal();
@@ -562,7 +548,7 @@ function doNewWeek() {
     people: register.map(function(p){
       return {
         id: p.id, first: p.first, last: p.last, dob: p.dob, age: calcAge(p.dob),
-        year: p.year || '', guardian: p.guardian, contact: p.contact,
+        guardian: p.guardian, contact: p.contact,
         present: today.includes(p.id) ? 'Yes' : 'No'  // today already cleared, so all No — use saved list
       };
     })
@@ -625,7 +611,7 @@ function printLabels() {
   area.innerHTML = presentPeople.map(function(p){
     return '<div class="label-item">' +
       '<div class="ln">' + p.first + ' ' + p.last + '</div>' +
-      '<div class="ls">Age ' + calcAge(p.dob) + (p.year ? ' · ' + p.year : '') + '</div>' +
+      '<div class="ls">Age ' + calcAge(p.dob) + '</div>' +
       '<div class="lc">Guardian: ' + p.guardian + '</div>' +
     '</div>';
   }).join('');
