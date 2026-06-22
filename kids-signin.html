@@ -523,7 +523,9 @@ function cardHtml(child, entry, state) {
 var pendingSignInId = null;
 
 function needsUpdate(child) {
-  return !child.dob || child.medical === undefined || child.medical === null;
+  var missingDob     = !child.dob || child.dob.trim() === '';
+  var missingMedical = child.medical === undefined || child.medical === null;
+  return missingDob || missingMedical;
 }
 
 function openUpdatePrompt(child) {
