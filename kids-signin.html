@@ -363,10 +363,17 @@ function getUrl() { return localStorage.getItem(SHEETS_URL_KEY) || ''; }
 function calcAge(dob) {
   if (!dob) return '';
   var b;
-  // Handle DD/MM/YYYY format (from Google Sheets display)
+  // Handle DD/MM/YYYY format
   if (/^\d{2}\/\d{2}\/\d{4}$/.test(dob)) {
-    var parts = dob.split('/');
-    b = new Date(parts[2], parts[1]-1, parts[0]);
+    var p = dob.split('/');
+    b = new Date(p[2], p[1]-1, p[0]);
+  // Handle DD-Mon-YYYY format e.g. 29-Feb-2024
+  } else if (/^\d{1,2}-[A-Za-z]{3}-\d{4}$/.test(dob)) {
+    b = new Date(dob.replace(/-/g, ' '));
+  // Handle YYYY-MM-DD format from iOS date picker
+  } else if (/^\d{4}-\d{2}-\d{2}$/.test(dob)) {
+    var p2 = dob.split('-');
+    b = new Date(p2[0], p2[1]-1, p2[2]);
   } else {
     b = new Date(dob);
   }
