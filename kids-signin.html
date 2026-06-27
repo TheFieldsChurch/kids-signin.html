@@ -833,56 +833,60 @@ function setUrlStatus(msg, colour) {
   el.textContent = msg; el.style.color = colour || 'var(--muted)';
 }
 
-/* LABEL PRINT — renders each label as an SVG at exact physical dimensions.
-   Safari/AirPrint ignores @page size, so we use SVG with explicit mm viewBox
-   and one SVG per page. The popup contains only SVGs, one per label. */
+/* LABEL PRINT
+   Safari on iPad ignores @page size and adds its own URL/date/time headers.
+   Strategy:
+   - Print one label at a time in its own popup
+   - Fill the entire viewport with the label content so Safari's auto-scaling
+     fits it to whatever paper size is loaded (DK-11209 set once on the printer)
+   - Use -webkit-print-color-adjust and margins:0 to suppress as much as possible
+   - User must turn off Headers & Footers once in Safari Settings */
 function makeLabelSvg(c) {
   var age = c.dob ? calcAge(c.dob) : (c.age || '');
   var detail = (age ? 'Age ' + age + ' \u2013 ' : '') + esc(c.guardian);
-  /* DK-11209 label: 62mm wide x 29mm tall */
   return '<svg xmlns="http://www.w3.org/2000/svg"'
-    + ' width="62mm" height="29mm"'
-    + ' viewBox="0 0 220 103"'
-    + ' style="display:block;">'
-    + '<rect width="220" height="103" fill="white"/>'
-    + '<text x="110" y="46" text-anchor="middle" dominant-baseline="middle"'
+    + ' viewBox="0 0 620 290" preserveAspectRatio="xMidYMid meet"'
+    + ' style="width:100vw;height:100vh;display:block;">'
+    + '<rect width="620" height="290" fill="white"/>'
+    + '<text x="310" y="115" text-anchor="middle" dominant-baseline="middle"'
     + ' font-family="-apple-system,BlinkMacSystemFont,Helvetica,sans-serif"'
-    + ' font-size="28" font-weight="800" fill="#1a1a1a">' + esc(c.name) + '</text>'
-    + '<text x="110" y="71" text-anchor="middle" dominant-baseline="middle"'
+    + ' font-size="90" font-weight="800" fill="#1a1a1a">' + esc(c.name) + '</text>'
+    + '<text x="310" y="195" text-anchor="middle" dominant-baseline="middle"'
     + ' font-family="-apple-system,BlinkMacSystemFont,Helvetica,sans-serif"'
-    + ' font-size="13" fill="#555555">' + detail + '</text>'
-    + '<text x="110" y="89" text-anchor="middle" dominant-baseline="middle"'
+    + ' font-size="42" fill="#444444">' + detail + '</text>'
+    + '<text x="310" y="255" text-anchor="middle" dominant-baseline="middle"'
     + ' font-family="-apple-system,BlinkMacSystemFont,Helvetica,sans-serif"'
-    + ' font-size="11" fill="#888888">The Fields Church \u2013 Kids Church</text>'
+    + ' font-size="32" fill="#888888">The Fields Church \u2013 Kids Church</text>'
     + '</svg>';
 }
 
 function buildLabelHtml(list) {
-  /* Each SVG is 62mm x 29mm. Wrap each in a div with page-break-after.
-     html/body constrained to 62mm wide so Safari doesn't add side margins. */
+  /* One page per label - each SVG fills 100vw x 100vh */
   var pages = list.map(function(c){
     return '<div class="lpage">' + makeLabelSvg(c) + '</div>';
   }).join('');
-  return '<!DOCTYPE html><html><head><meta charset="UTF-8">'
+  return '<!DOCTYPE html><html><head>'
+    + '<meta charset="UTF-8">'
+    + '<meta name="viewport" content="width=device-width,initial-scale=1">'
     + '<style>'
-    + '*{box-sizing:border-box;margin:0;padding:0;}'
-    + '@page{size:62mm 29mm;margin:0;}'
-    + 'html,body{margin:0;padding:0;background:#fff;width:62mm;}'
-    + '.lpage{width:62mm;height:29mm;overflow:hidden;page-break-after:always;break-after:page;}'
+    + '*{margin:0;padding:0;box-sizing:border-box;}'
+    + '@page{margin:0;}'
+    + 'html,body{width:100%;height:100%;background:#fff;overflow:hidden;}'
+    + '.lpage{width:100vw;height:100vh;overflow:hidden;page-break-after:always;break-after:page;display:flex;align-items:center;justify-content:center;}'
     + '@media print{'
-    + '@page{size:62mm 29mm;margin:0;}'
-    + 'html,body{width:62mm;margin:0;padding:0;}'
-    + '.lpage{width:62mm;height:29mm;overflow:hidden;page-break-after:always;break-after:page;}'
+    + '@page{margin:0;}'
+    + 'html,body{-webkit-print-color-adjust:exact;print-color-adjust:exact;}'
+    + '.lpage{width:100vw;height:100vh;page-break-after:always;break-after:page;}'
     + '}'
     + '</style></head><body>'
     + pages
-    + '<script>window.onload=function(){setTimeout(function(){window.print();},200);};<\/script>'
+    + '<script>window.onload=function(){setTimeout(function(){window.print();},300);};<\/script>'
     + '</body></html>';
 }
 
 function openPrintWindow(list) {
   var html = buildLabelHtml(list);
-  var w = window.open('', '_blank', 'width=240,height=120');
+  var w = window.open('', '_blank', 'width=400,height=200');
   if (!w) { alert('Please allow pop-ups for this page to print labels, then try again.'); return; }
   w.document.open();
   w.document.write(html);
