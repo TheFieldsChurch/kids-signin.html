@@ -816,47 +816,52 @@ function setUrlStatus(msg, colour) {
 }
 
 /* LABEL PRINT
-   Opens a minimal popup containing only the label SVG.
-   Chrome on iOS handles this correctly unlike Safari.
-   The popup auto-prints and auto-closes. */
+   iOS (both Safari and Chrome) ignores @page size for AirPrint to label printers.
+   Solution: render the label as a fixed-pixel popup sized to exactly match
+   62mm x 29mm at 96dpi (235 x 110px screen) so the browser has nothing
+   to scale or paginate. The SVG viewBox is wider to prevent name clipping.
+   Landscape is forced by making width > height physically. */
 function makeLabelSvg(c) {
   var age = c.dob ? calcAge(c.dob) : (c.age || '');
   var detail = (age ? 'Age ' + age + ' – ' : '') + esc(c.guardian);
+  /* Wide viewBox with padding on sides to prevent clipping */
   return '<svg xmlns="http://www.w3.org/2000/svg"'
-    + ' viewBox="0 0 620 290"'
+    + ' viewBox="-20 0 660 290"'
     + ' style="display:block;width:100%;height:100%;">'
-    + '<rect width="620" height="290" fill="white"/>'
-    + '<text x="310" y="115" text-anchor="middle" dominant-baseline="middle"'
+    + '<rect x="-20" width="660" height="290" fill="white"/>'
+    + '<text x="310" y="108" text-anchor="middle" dominant-baseline="middle"'
     + ' font-family="Helvetica,Arial,sans-serif"'
-    + ' font-size="96" font-weight="800" fill="#1a1a1a">' + esc(c.name) + '</text>'
-    + '<text x="310" y="200" text-anchor="middle" dominant-baseline="middle"'
+    + ' font-size="88" font-weight="800" fill="#1a1a1a">' + esc(c.name) + '</text>'
+    + '<text x="310" y="192" text-anchor="middle" dominant-baseline="middle"'
     + ' font-family="Helvetica,Arial,sans-serif"'
-    + ' font-size="44" fill="#444444">' + detail + '</text>'
-    + '<text x="310" y="258" text-anchor="middle" dominant-baseline="middle"'
+    + ' font-size="42" fill="#444444">' + detail + '</text>'
+    + '<text x="310" y="254" text-anchor="middle" dominant-baseline="middle"'
     + ' font-family="Helvetica,Arial,sans-serif"'
-    + ' font-size="30" fill="#888888">The Fields Church – Kids Church</text>'
+    + ' font-size="28" fill="#888888">The Fields Church – Kids Church</text>'
     + '</svg>';
 }
 
 function buildLabelHtml(list) {
+  /* 62mm x 29mm at 96dpi = 234.6 x 109.7px ~ 235 x 110px
+     We open a popup window exactly this size so iOS prints it
+     as a single page with no scaling needed and landscape naturally
+     because width (235) > height (110). */
   var pages = list.map(function(c, i){
     var isLast = (i === list.length - 1);
-    return '<div style="'
-      + 'width:62mm;height:29mm;'
-      + 'overflow:hidden;'
-      + 'display:flex;align-items:center;justify-content:center;'
+    return '<div style="width:235px;height:110px;overflow:hidden;display:block;'
       + (!isLast ? 'page-break-after:always;break-after:page;' : '')
       + '">' + makeLabelSvg(c) + '</div>';
   }).join('');
   return '<!DOCTYPE html><html><head>'
     + '<meta charset="UTF-8">'
+    + '<meta name="viewport" content="width=235,initial-scale=1">'
     + '<style>'
     + '*{margin:0;padding:0;box-sizing:border-box;}'
-    + '@page{size:62mm 29mm landscape;margin:0;}'
-    + 'html,body{width:62mm;height:29mm;margin:0;padding:0;background:#fff;overflow:hidden;}'
+    + '@page{margin:0;}'
+    + 'html,body{width:235px;height:110px;margin:0;padding:0;background:#fff;overflow:hidden;}'
     + '@media print{'
-    + '@page{size:62mm 29mm landscape;margin:0;}'
-    + 'html,body{width:62mm;height:29mm;margin:0;padding:0;overflow:hidden;}'
+    + '@page{margin:0;}'
+    + 'html,body{width:235px;height:110px;margin:0;padding:0;overflow:hidden;}'
     + '}'
     + '</style></head><body>'
     + pages
@@ -868,7 +873,7 @@ function buildLabelHtml(list) {
 }
 
 function openPrintWindow(list) {
-  var w = window.open('', '_blank', 'width=240,height=120');
+  var w = window.open('', '_blank', 'width=235,height=110,toolbar=no,scrollbars=no,resizable=no');
   if (!w) { alert('Please allow pop-ups for this page, then try again.'); return; }
   var html = buildLabelHtml(list);
   w.document.open();
