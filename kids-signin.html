@@ -157,25 +157,6 @@ header{background:#5C3D4E;color:#FFFFFF;padding:14px 20px;flex-shrink:0;}
 .toast{position:fixed;bottom:100px;left:50%;transform:translateX(-50%);background:var(--slate);color:var(--white);padding:10px 22px;border-radius:20px;font-size:14px;font-weight:600;opacity:0;pointer-events:none;transition:opacity .2s;z-index:200;white-space:nowrap;}
 .toast.show{opacity:1;}
 
-/* PRINT */
-@media print{
-  @page{size:62mm 29mm;margin:0;}
-  body > *:not(#labelPrintArea){display:none !important;}
-  #labelPrintArea{display:block !important;padding:0;margin:0;}
-  .print-label{
-    width:62mm;height:29mm;
-    border:0.5px solid #ccc;
-    border-radius:2mm;
-    padding:3mm 4mm;
-    text-align:center;
-    display:flex;flex-direction:column;align-items:center;justify-content:center;
-    page-break-after:always;
-    overflow:hidden;
-  }
-  .pl-name{font-size:16pt;font-weight:800;margin-bottom:1mm;line-height:1.1;}
-  .pl-detail{font-size:8pt;color:#555;line-height:1.2;}
-  .pl-church{font-size:7pt;color:#888;margin-top:1mm;}
-}
 #labelPrintArea{display:none;}
 </style>
 </head>
@@ -351,6 +332,7 @@ header{background:#5C3D4E;color:#FFFFFF;padding:14px 20px;flex-shrink:0;}
 
 <div class="toast" id="toast"></div>
 <div id="labelPrintArea"></div>
+<iframe id="printFrame" style="position:fixed;top:-9999px;left:-9999px;width:1px;height:1px;border:none;" tabindex="-1"></iframe>
 
 <script>
 var SHEETS_URL_KEY = 'kidsSheetUrl';
@@ -834,63 +816,64 @@ function setUrlStatus(msg, colour) {
 }
 
 /* LABEL PRINT
-   Safari on iPad ignores @page size and adds its own URL/date/time headers.
-   Strategy:
-   - Print one label at a time in its own popup
-   - Fill the entire viewport with the label content so Safari's auto-scaling
-     fits it to whatever paper size is loaded (DK-11209 set once on the printer)
-   - Use -webkit-print-color-adjust and margins:0 to suppress as much as possible
-   - User must turn off Headers & Footers once in Safari Settings */
+   Uses a hidden iframe within the same page so parents never navigate away.
+   Each label is an SVG. Safari on iPad ignores @page size but respects
+   the paper loaded in the printer - select DK-11209 once in the print dialog.
+   Headers/footers: in the print dialog tap the paper size area to reveal
+   options, or go to the share sheet > Print > swipe up on preview to see options. */
+
 function makeLabelSvg(c) {
   var age = c.dob ? calcAge(c.dob) : (c.age || '');
-  var detail = (age ? 'Age ' + age + ' \u2013 ' : '') + esc(c.guardian);
+  var detail = (age ? 'Age ' + age + ' – ' : '') + esc(c.guardian);
+  /* viewBox 620x290 = 62mm x 29mm at 10px/mm — landscape label */
   return '<svg xmlns="http://www.w3.org/2000/svg"'
-    + ' viewBox="0 0 620 290" preserveAspectRatio="xMidYMid meet"'
-    + ' style="width:100vw;height:100vh;display:block;">'
+    + ' viewBox="0 0 620 290"'
+    + ' width="620" height="290"'
+    + ' style="display:block;width:100%;height:auto;">'
     + '<rect width="620" height="290" fill="white"/>'
-    + '<text x="310" y="115" text-anchor="middle" dominant-baseline="middle"'
+    + '<text x="310" y="120" text-anchor="middle" dominant-baseline="middle"'
     + ' font-family="-apple-system,BlinkMacSystemFont,Helvetica,sans-serif"'
     + ' font-size="90" font-weight="800" fill="#1a1a1a">' + esc(c.name) + '</text>'
-    + '<text x="310" y="195" text-anchor="middle" dominant-baseline="middle"'
+    + '<text x="310" y="200" text-anchor="middle" dominant-baseline="middle"'
     + ' font-family="-apple-system,BlinkMacSystemFont,Helvetica,sans-serif"'
     + ' font-size="42" fill="#444444">' + detail + '</text>'
-    + '<text x="310" y="255" text-anchor="middle" dominant-baseline="middle"'
+    + '<text x="310" y="258" text-anchor="middle" dominant-baseline="middle"'
     + ' font-family="-apple-system,BlinkMacSystemFont,Helvetica,sans-serif"'
-    + ' font-size="32" fill="#888888">The Fields Church \u2013 Kids Church</text>'
+    + ' font-size="32" fill="#888888">The Fields Church – Kids Church</text>'
     + '</svg>';
 }
 
 function buildLabelHtml(list) {
-  /* One page per label - each SVG fills 100vw x 100vh */
-  var pages = list.map(function(c){
-    return '<div class="lpage">' + makeLabelSvg(c) + '</div>';
+  var svgs = list.map(function(c){
+    return '<div style="page-break-after:always;break-after:page;margin:0;padding:0;">'
+      + makeLabelSvg(c)
+      + '</div>';
   }).join('');
   return '<!DOCTYPE html><html><head>'
     + '<meta charset="UTF-8">'
-    + '<meta name="viewport" content="width=device-width,initial-scale=1">'
     + '<style>'
     + '*{margin:0;padding:0;box-sizing:border-box;}'
-    + '@page{margin:0;}'
-    + 'html,body{width:100%;height:100%;background:#fff;overflow:hidden;}'
-    + '.lpage{width:100vw;height:100vh;overflow:hidden;page-break-after:always;break-after:page;display:flex;align-items:center;justify-content:center;}'
-    + '@media print{'
-    + '@page{margin:0;}'
-    + 'html,body{-webkit-print-color-adjust:exact;print-color-adjust:exact;}'
-    + '.lpage{width:100vw;height:100vh;page-break-after:always;break-after:page;}'
-    + '}'
-    + '</style></head><body>'
-    + pages
-    + '<script>window.onload=function(){setTimeout(function(){window.print();},300);};<\/script>'
-    + '</body></html>';
+    + '@page{margin:0;size:62mm 29mm landscape;}'
+    + 'html,body{margin:0;padding:0;background:#fff;}'
+    + '</style>'
+    + '</head><body>' + svgs + '</body></html>';
 }
 
 function openPrintWindow(list) {
+  var frame = document.getElementById('printFrame');
+  if (!frame) {
+    frame = document.createElement('iframe');
+    frame.id = 'printFrame';
+    frame.style.cssText = 'position:fixed;top:-9999px;left:-9999px;width:1px;height:1px;border:none;';
+    document.body.appendChild(frame);
+  }
   var html = buildLabelHtml(list);
-  var w = window.open('', '_blank', 'width=400,height=200');
-  if (!w) { alert('Please allow pop-ups for this page to print labels, then try again.'); return; }
-  w.document.open();
-  w.document.write(html);
-  w.document.close();
+  var doc = frame.contentDocument || frame.contentWindow.document;
+  doc.open(); doc.write(html); doc.close();
+  setTimeout(function(){
+    frame.contentWindow.focus();
+    frame.contentWindow.print();
+  }, 400);
 }
 
 /* AUTO PRINT LABEL ON SIGN-IN */
